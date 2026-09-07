@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>3D LASER Watch Viewer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body { margin: 0; background-color: #222; color: #fff; overflow: hidden; }
+        canvas { display: block; }
+        
+        /* Centered Info Text */
+        .info {
+            position: absolute;
+            top: 40px; 
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Green Hover Text */
+        #hover-info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            color: #00ff00; 
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 20;
+            pointer-events: none;
+            text-shadow: 0 0 5px #000;
+        }
+
+        /* Top Left Buttons */
+        .buttons {
+            position: absolute;
+            top: 40px;
+            left: 10px;
+            z-index: 10;
+        }
+        button {
+            display: block;
+            margin: 5px;
+            padding: 8px 12px;
+            background: #444;
+            border: 1px solid #888;
+            color: white;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+        }
+        button:hover {
+            background: #555;
+        }
+
+        /* --- UPDATED: Collapsible Parts List --- */
+        #parts-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 280px;
+            z-index: 20; /* High z-index to sit on top */
+        }
+
+        #parts-header {
+            background: #333;
+            border: 1px solid #888;
+            color: #00ff00;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #parts-header:hover {
+            background: #444;
+        }
+
+        #parts-content {
+            background: rgba(0, 0, 0, 0.85); /* Darker background for readability */
+            border: 1px solid #888;
+            border-top: none;
+            padding: 0 10px; /* Padding on sides only initially */
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            
+            /* Animation Props */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease;
+        }
+
+        /* Class to apply when expanded */
+        #parts-content.expanded {
+            max-height: 80vh; /* Allow it to grow tall */
+            padding: 10px;    /* Restore vertical padding */
+            overflow-y: auto; /* Scroll if too tall */
+        }
+
+        #parts-content h3 {
+            margin-top: 10px;
+            margin-bottom: 5px;
+            color: #00aaff;
+            border-bottom: 1px solid #555;
+            padding-bottom: 2px;
+        }
+        #parts-content ul, #parts-content ol {
+            margin: 0;
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+        #parts-content li {
+            margin-bottom: 4px;
+        }
+        #parts-content a {
+            color: #00ff00;
+            text-decoration: none;
+        }
+        #parts-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* Axis Labels */
+        #label-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+        }
+        .axis-label {
+            color: #fff;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 2px 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="label-container"></div>
+    <div id="hover-info"></div>
+    
+    <div class="info">Interactive 3D Watch Viewer | Click Parts to Identify</div>
+    
+    <div class="buttons">
+        <button id="toggleGridBtn">Toggle Grid/Axes: ON</button>
+        <button id="toggleBendBtn">Bend Watch Band</button>
+    </div>
+
+    <div id="parts-container">
+        <div id="parts-header" onclick="togglePartsList()">
+            <span>Project Specs & Instructions</span>
+            <span id="header-icon">▼</span>
+        </div>
+        <div id="parts-content">
+            <h3>Pack Specs</h3>
+            <ul>
+                <li><b>Output Voltage:</b> 7.4V (8.4V max)</li>
+                <li><b>Est. Max Power:</b> 50W+ (load dependent)</li>
+            </ul>
+            <h3>Parts List</h3>
+            <ul>
+                <li>(24) <b>1S 3.7V LiPo</b> (Lithium Polymer) Pouch Cells</li>
+                <li>(1) Galaxy Watch 5 Case</li>
+                <li>(1) High-Power LASER Diode on PCB</li>
+                <li>(1) SPST Momentary Pushbutton (7mm)</li>
+                <li>(1) 3-pin JST-XH Balance Connector</li>
+                <li>(1) Micro XT30 Power Connector</li>
+                <li><b>Power Wires:</b> 22-24 AWG Silicone</li>
+                <li><b>Balance Wires:</b> 26-28 AWG Silicone</li>
+                <li>Transparent TPU/Resin (for band links)</li>
+                <li><b><a href="https://www.racedayquads.com/collections/1s-batteries" target="_blank">Purchase Micro 1S LiPo Cells</a></b></li>
+            </ul>
+            <h3>Build Instructions</h3>
+            <ol>
+                <li>3D print transparent band links.</li>
+                <li>Wire two 3.7V cells in series (makes 7.4V block).</li>
+                <li>Embed one 7.4V block per link.</li>
+                <li>Run main power bus (red/black) in parallel to all links.</li>
+                <li><b>LED:</b> Mount LED on a small heatsink/PCB. Solder leads.</li>
+                <li><b>Button:</b> Solder leads to momentary pushbutton.</li>
+                <li><b>Connectors:</b> Wire main bus to XT30. Wire final link's 3.7V tap to the JST balance plug.</li>
+                <li><b>Final Circuit:</b> Connect Battery (XT30) -> Button -> LED Driver -> LED.</li>
+            </ol>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/",
+            "@tweenjs/tween.js": "https://unpkg.com/three@0.164.1/examples/jsm/libs/tween.module.js"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import * as TWEEN from '@tweenjs/tween.js'; 
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        // --- UI TOGGLE FUNCTION ---
+        window.togglePartsList = function() {
+            const content = document.getElementById('parts-content');
+            const icon = document.getElementById('header-icon');
+            content.classList.toggle('expanded');
+            
+            if (content.classList.contains('expanded')) {
+                icon.textContent = '▲';
+            } else {
+                icon.textContent = '▼';
+            }
+        };
+
+        let scene, camera, renderer, controls;
+        let labelRenderer; 
+        let gridHelper, axesHelper;
+        let axisLabelX, axisLabelY, axisLabelZ;
+        let isBent = false;
+        let topPivots = [], bottomPivots = [];
+        
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let currentHoverName = null;
+        let hoverInfoElement;
+
+        let batteryMaterials;
+        
+        const bendAngle = Math.PI / 12; // Angle per segment (15 degrees)
+        const flatAngle = 0;
+        const animationDuration = 750; // in ms
+
+        function createBatteryTexture() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 128;
+            canvas.height = 256; 
+            
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('3.7V LiPo', canvas.width / 2, canvas.height / 2);
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function init() {
+            hoverInfoElement = document.getElementById('hover-info');
+
+            // 1. Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x333333);
+
+            // 2. Camera
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(-2, 2, 2); 
+
+            // 3. Renderer (for 3D)
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // 4. 2D Label Renderer
+            const labelContainer = document.getElementById('label-container');
+            labelRenderer = new CSS2DRenderer();
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.domElement.style.position = 'absolute';
+            labelRenderer.domElement.style.top = '0px';
+            labelContainer.appendChild(labelRenderer.domElement);
+
+            // 5. Controls
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; 
+            controls.dampingFactor = 0.05;
+            controls.target.set(0, 0, 0); 
+
+            // 6. Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            directionalLight.position.set(5, 10, 7.5);
+            scene.add(directionalLight);
+
+            // 7. Helpers (Grid/Axes/Labels)
+            gridHelper = new THREE.GridHelper(10, 10, 0x888888, 0x444444);
+            scene.add(gridHelper);
+
+            axesHelper = new THREE.AxesHelper(2); 
+            scene.add(axesHelper);
+            
+            const labelXDiv = document.createElement('div');
+            labelXDiv.className = 'axis-label';
+            labelXDiv.textContent = 'X';
+            axisLabelX = new CSS2DObject(labelXDiv);
+            axisLabelX.position.set(2.5, 0, 0);
+            scene.add(axisLabelX);
+
+            const labelYDiv = document.createElement('div');
+            labelYDiv.className = 'axis-label';
+            labelYDiv.textContent = 'Y';
+            axisLabelY = new CSS2DObject(labelYDiv);
+            axisLabelY.position.set(0, 2.5, 0);
+            scene.add(axisLabelY);
+
+            const labelZDiv = document.createElement('div');
+            labelZDiv.className = 'axis-label';
+            labelZDiv.textContent = 'Z';
+            axisLabelZ = new CSS2DObject(labelZDiv);
+            axisLabelZ.position.set(0, 0, 2.5);
+            scene.add(axisLabelZ);
+
+            // 8. --- Build Our Procedural Watch Model ---
+            const watchGroup = new THREE.Group();
+            scene.add(watchGroup);
+
+            // --- Materials ---
+            const watchCaseMat = new THREE.MeshStandardMaterial({ color: 0x888899, metalness: 0.8, roughness: 0.2 });
+            const watchScreenMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+            const bandLinkMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.2, roughness: 0.1 });
+            const ledMat = new THREE.MeshBasicMaterial({ color: 0xffffff, emissive: 0xffffff, toneMapped: false });
+            const buttonMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.5, roughness: 0.3 });
+            const wireMatRed = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const wireMatBlack = new THREE.MeshBasicMaterial({ color: 0x111111 });
+            const wireMatBlue = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+            const connectorMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            
+            // --- Battery Materials ---
+            const batterySideMat = new THREE.MeshBasicMaterial({ color: 0x1a1a1a });
+            const batteryTopMat = new THREE.MeshStandardMaterial({ map: createBatteryTexture() });
+            batteryMaterials = [
+                batterySideMat, batterySideMat, batteryTopMat, 
+                batterySideMat, batterySideMat, batterySideMat
+            ];
+
+            // --- Watch Body ---
+            const watchRadius = 0.5;
+            const watchHeight = 0.2;
+            const watchBodyGeo = new THREE.CylinderGeometry(watchRadius, watchRadius, watchHeight, 64);
+            const watchBody = new THREE.Mesh(watchBodyGeo, watchCaseMat);
+            watchBody.name = "Galaxy Watch 5 Case"; 
+            
+            const watchScreenGeo = new THREE.CylinderGeometry(watchRadius * 0.85, watchRadius * 0.85, watchHeight + 0.01, 64);
+            const watchScreen = new THREE.Mesh(watchScreenGeo, watchScreenMat);
+            watchScreen.name = "Watch Screen"; 
+            
+            watchGroup.add(watchBody);
+            watchGroup.add(watchScreen);
+            
+            // --- LED ---
+            const ledRadius = 0.08; 
+            const ledGeo = new THREE.CylinderGeometry(ledRadius, ledRadius, 0.1, 16);
+            const led = new THREE.Mesh(ledGeo, ledMat);
+            led.name = "High-Power LED Emitter";
+            led.position.set(0, 0, -watchRadius); 
+            led.rotation.x = -Math.PI / 2; 
+            watchGroup.add(led);
+
+            const lightBeamGeo = new THREE.CylinderGeometry(ledRadius, ledRadius * 1.5, 4, 16, 1, true); 
+            const lightBeamMat = new THREE.MeshBasicMaterial({ 
+                color: 0xffffff, 
+                transparent: true, 
+                opacity: 0.2, 
+                alphaMap: createLightGradient(),
+                side: THREE.DoubleSide
+            });
+            const lightBeam = new THREE.Mesh(lightBeamGeo, lightBeamMat);
+            lightBeam.name = "Light Beam"; 
+            lightBeam.position.set(0, 0, -watchRadius - 2.05); 
+            lightBeam.rotation.x = -Math.PI / 2;
+            watchGroup.add(lightBeam);
+
+            // --- Button ---
+            const buttonGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.1, 12);
+            const button = new THREE.Mesh(buttonGeo, buttonMat);
+            button.name = "Flashlight Activation Button"; 
+            button.position.set(-watchRadius, 0, 0); 
+            button.rotation.z = Math.PI / 2; 
+            watchGroup.add(button);
+            
+            // --- XT30 Connector ---
+            const xt30Group = new THREE.Group();
+            xt30Group.name = "Micro XT30 Power Connector";
+            
+            const xt30BodyMat = new THREE.MeshStandardMaterial({ color: 0xffd700, roughness: 0.3 });
+            const xt30BodyGeo = new THREE.BoxGeometry(0.15, 0.1, 0.1);
+            const xt30Body = new THREE.Mesh(xt30BodyGeo, xt30BodyMat);
+            xt30Body.position.set(0, 0.05, 0);
+            xt30Group.add(xt30Body);
+
+            const pinMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 1.0, roughness: 0.2 });
+            const pinGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.1, 8);
+            const pin1 = new THREE.Mesh(pinGeo, pinMat);
+            pin1.position.set(0.04, 0, 0);
+            pin1.rotation.z = Math.PI / 2;
+            xt30Body.add(pin1);
+            const pin2 = new THREE.Mesh(pinGeo, pinMat);
+            pin2.position.set(-0.04, 0, 0);
+            pin2.rotation.z = Math.PI / 2;
+            xt30Body.add(pin2);
+            
+            xt30Group.position.set(0, 0, watchRadius + 0.1);
+            watchGroup.add(xt30Group);
+
+            // --- Watch Band ---
+            const numSegments = 12; 
+            const segmentWidth = 0.45;
+            const segmentHeight = 0.15;
+            const segmentLength = 0.3;
+            
+            let topParent = watchGroup;
+            let bottomParent = watchGroup;
+
+            for (let i = 0; i < numSegments; i++) {
+                const topPivot = new THREE.Group();
+                topPivot.position.set(0, 0, i === 0 ? watchRadius : segmentLength);
+                topParent.add(topPivot);
+                
+                let linkTop;
+                if (i === 0) {
+                    linkTop = createBandLink(segmentWidth, segmentHeight, segmentLength, bandLinkMat, wireMatRed, wireMatBlack, wireMatBlue, connectorMat, false, xt30Group);
+                } else {
+                    linkTop = createBandLink(segmentWidth, segmentHeight, segmentLength, bandLinkMat, wireMatRed, wireMatBlack, wireMatBlue, connectorMat, i === numSegments - 1, null);
+                }
+                linkTop.position.z = segmentLength / 2; 
+                topPivot.add(linkTop);
+
+                topPivots.push(topPivot);
+                topParent = topPivot; 
+
+                const bottomPivot = new THREE.Group();
+                bottomPivot.position.set(0, 0, i === 0 ? -watchRadius : -segmentLength);
+                bottomParent.add(bottomPivot);
+                
+                const linkBottom = createBandLink(segmentWidth, segmentHeight, segmentLength, bandLinkMat, wireMatRed, wireMatBlack, null, null, false, null); 
+                linkBottom.position.z = -segmentLength / 2; 
+                bottomPivot.add(linkBottom);
+                
+                bottomPivots.push(bottomPivot);
+                bottomParent = bottomPivot; 
+            }
+
+            document.getElementById('toggleGridBtn').addEventListener('click', toggleGrid);
+            document.getElementById('toggleBendBtn').addEventListener('click', toggleBend);
+            window.addEventListener('mousedown', onMouseClick);
+
+            animate();
+        }
+
+        function createBandLink(w, h, l, bandMat, wireRed, wireBlack, wireBlue, connMat, isBalanceLink, xt30) {
+            const linkGroup = new THREE.Group();
+            
+            const linkGeo = new THREE.BoxGeometry(w, h, l);
+            const linkMesh = new THREE.Mesh(linkGeo, bandMat);
+            linkMesh.name = "Transparent Band Link"; 
+            linkGroup.add(linkMesh);
+            
+            const battW = w * 0.4;
+            const battH = h * 0.7;
+            const battL = l * 0.8;
+            
+            const batt1Geo = new THREE.BoxGeometry(battW, battH, battL);
+            const batt1 = new THREE.Mesh(batt1Geo, batteryMaterials);
+            batt1.position.x = -w * 0.25;
+            batt1.name = "1S 3.7V LiPo Cell"; 
+            linkGroup.add(batt1);
+            
+            const batt2Geo = new THREE.BoxGeometry(battW, battH, battL);
+            const batt2 = new THREE.Mesh(batt2Geo, batteryMaterials);
+            batt2.position.x = w * 0.25;
+            batt2.name = "1S 3.7V LiPo Cell"; 
+            linkGroup.add(batt2);
+
+            const tubeRadius = 0.005;
+            
+            const busGeo = new THREE.CylinderGeometry(0.01, 0.01, l, 8);
+            const redBus = new THREE.Mesh(busGeo, wireRed);
+            redBus.position.x = w * 0.4;
+            redBus.rotation.x = Math.PI / 2;
+            redBus.name = "7.4V Positive Power Bus"; 
+            linkGroup.add(redBus);
+            
+            const blackBus = new THREE.Mesh(busGeo, wireBlack);
+            blackBus.position.x = -w * 0.4;
+            blackBus.rotation.x = Math.PI / 2;
+            blackBus.name = "Negative Power Bus"; 
+            linkGroup.add(blackBus);
+
+            const p1_b1_neg = new THREE.Vector3(-w * 0.25, 0, -battL / 2);
+            const p2_b1_neg = new THREE.Vector3(-w * 0.4, 0, -battL / 2);
+            linkGroup.add(createWire(p1_b1_neg, p2_b1_neg, wireBlack, tubeRadius));
+            
+            const p1_b2_pos = new THREE.Vector3(w * 0.25, 0, battL / 2);
+            const p2_b2_pos = new THREE.Vector3(w * 0.4, 0, battL / 2);
+            linkGroup.add(createWire(p1_b2_pos, p2_b2_pos, wireRed, tubeRadius));
+            
+            const p1_b1_pos = new THREE.Vector3(-w * 0.25, 0, battL / 2);
+            const p2_b2_neg = new THREE.Vector3(w * 0.25, 0, -battL / 2);
+            const mid_series = new THREE.Vector3(0, 0, 0); 
+            const seriesCurve = new THREE.CatmullRomCurve3([p1_b1_pos, mid_series, p2_b2_neg]);
+            const seriesTube = new THREE.TubeGeometry(seriesCurve, 10, tubeRadius, 8);
+            const seriesWire = new THREE.Mesh(seriesTube, wireRed);
+            seriesWire.name = "Series Connector (Cells 1->2)"; 
+            linkGroup.add(seriesWire); 
+
+            if (xt30) {
+                const p1_xt30_red = new THREE.Vector3(w * 0.4, 0, -l / 2); 
+                const p2_xt30_red = new THREE.Vector3(0.04, 0.05, -l / 2 - 0.1); 
+                linkGroup.add(createWire(p1_xt30_red, p2_xt30_red, wireRed, tubeRadius * 2));
+                
+                const p1_xt30_black = new THREE.Vector3(-w * 0.4, 0, -l / 2); 
+                const p2_xt30_black = new THREE.Vector3(-0.04, 0.05, -l / 2 - 0.1); 
+                linkGroup.add(createWire(p1_xt30_black, p2_xt30_black, wireBlack, tubeRadius * 2));
+            }
+
+            if (isBalanceLink && wireBlue && connMat) {
+                const connGroup = new THREE.Group();
+                const connBaseGeo = new THREE.BoxGeometry(0.1, 0.05, 0.05);
+                const connBase = new THREE.Mesh(connBaseGeo, connMat);
+                connBase.position.y = -h / 2 - 0.025;
+                connBase.name = "JST-XH Balance Connector"; 
+                
+                const wireL = 0.05; 
+                
+                const p1_b_neg = new THREE.Vector3(-w * 0.4, 0, 0);
+                const p2_b_neg = new THREE.Vector3(-0.03, -h / 2, 0);
+                const p3_b_neg = new THREE.Vector3(-0.03, -h / 2 - wireL, 0);
+                linkGroup.add(createWire(p1_b_neg, p2_b_neg, wireBlack, tubeRadius));
+                linkGroup.add(createWire(p2_b_neg, p3_b_neg, wireBlack, tubeRadius));
+                
+                const p1_b_pos = new THREE.Vector3(w * 0.4, 0, 0);
+                const p2_b_pos = new THREE.Vector3(0.03, -h / 2, 0);
+                const p3_b_pos = new THREE.Vector3(0.03, -h / 2 - wireL, 0);
+                linkGroup.add(createWire(p1_b_pos, p2_b_pos, wireRed, tubeRadius));
+                linkGroup.add(createWire(p2_b_pos, p3_b_pos, wireRed, tubeRadius));
+
+                const p1_b_mid = new THREE.Vector3(0, 0, 0);
+                const p2_b_mid = new THREE.Vector3(0, -h / 2, 0);
+                const p3_b_mid = new THREE.Vector3(0, -h / 2 - wireL, 0);
+                const balanceWire = createWire(p1_b_mid, p2_b_mid, wireBlue, tubeRadius);
+                balanceWire.name = "Balance Wire (3.7V Tap)"; 
+                linkGroup.add(balanceWire);
+                linkGroup.add(createWire(p2_b_mid, p3_b_mid, wireBlue, tubeRadius));
+
+                connGroup.add(connBase);
+                connGroup.position.set(0, 0, l / 2); 
+                linkGroup.add(connGroup);
+            }
+
+            return linkGroup;
+        }
+        
+        function createWire(v1, v2, material, radius) {
+            const path = new THREE.LineCurve3(v1, v2);
+            const geo = new THREE.TubeGeometry(path, 1, radius, 8);
+            return new THREE.Mesh(geo, material);
+        }
+
+        function createLightGradient() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 128);
+            gradient.addColorStop(0, 'rgba(255,255,255,1)');
+            gradient.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1, 128);
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapT = THREE.ClampToEdgeWrapping; 
+            return texture;
+        }
+
+        function onMouseClick(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children, true); 
+            if (intersects.length > 0) {
+                const firstHit = intersects[0].object;
+                if (firstHit.name) {
+                    hoverInfoElement.textContent = firstHit.name;
+                }
+            } else {
+                 hoverInfoElement.textContent = "";
+            }
+        }
+
+        function toggleGrid() {
+            gridHelper.visible = !gridHelper.visible;
+            axesHelper.visible = !axesHelper.visible;
+            axisLabelX.visible = !axisLabelX.visible;
+            axisLabelY.visible = !axisLabelY.visible;
+            axisLabelZ.visible = !axisLabelZ.visible;
+            const btn = document.getElementById('toggleGridBtn');
+            btn.textContent = `Toggle Grid/Axes: ${gridHelper.visible ? 'ON' : 'OFF'}`;
+        }
+
+        function toggleBend() {
+            isBent = !isBent;
+            const targetAngle = isBent ? bendAngle : flatAngle;
+            const btn = document.getElementById('toggleBendBtn');
+            btn.textContent = isBent ? 'Flatten Watch Band' : 'Bend Watch Band';
+            
+            topPivots.forEach((pivot) => {
+                new TWEEN.Tween(pivot.rotation)
+                    .to({ x: targetAngle }, animationDuration) 
+                    .easing(TWEEN.Easing.Quadratic.InOut)
+                    .start();
+            });
+            
+            bottomPivots.forEach((pivot) => {
+                new TWEEN.Tween(pivot.rotation)
+                    .to({ x: -targetAngle }, animationDuration) 
+                    .easing(TWEEN.Easing.Quadratic.InOut)
+                    .start();
+            });
+        }
+        
+        function animate(time) {
+            requestAnimationFrame(animate);
+            TWEEN.update(time); 
+            controls.update(); 
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera); 
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight); 
+        });
+
+        init();
+    </script>
+</body>
+</html>
