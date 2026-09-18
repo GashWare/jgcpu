@@ -1207,6 +1207,7 @@
             });
 
             // 3. Dynamic Availability Checker from Cloudflare/Airtable
+            const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
             const checkLiveAvailability = async () => {
                 if (!bookingState.date) return;
                 try {
@@ -1644,19 +1645,18 @@
             }
         };
 
-        // Initialize when window loads
-        if (document.readyState === 'complete') {
-            initScheduler();
-            initTerminal();
-            initWordEgg();
-            initLocationCycling();
+        // Initialize when DOM is ready
+        const bootstrap = () => {
+            try { initScheduler(); } catch (e) { console.error('Scheduler init error:', e); }
+            try { initTerminal(); } catch (e) { console.error('Terminal init error:', e); }
+            try { initWordEgg(); } catch (e) { console.error('WordEgg init error:', e); }
+            try { initLocationCycling(); } catch (e) { console.error('LocationCycling init error:', e); }
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bootstrap);
         } else {
-            window.addEventListener('load', () => {
-                initScheduler();
-                initTerminal();
-                initWordEgg();
-                initLocationCycling();
-            });
+            bootstrap();
         }
     </script>
 </body>
