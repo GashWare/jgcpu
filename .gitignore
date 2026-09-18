@@ -1,0 +1,29 @@
+# Cloudflare Wrangler Configuration, Cache & Backend Workers
+.wrangler/
+Config/
+JavaScript/
+*.toml
+worker.js
+
+# Unfinished admin / dashboards
+admin-dash*
+
+# Temporary & Backup files
+* - Copy.html
+*Copy*
+*.bak
+*.tmp
+*.log
+
+# Personal Notes & Scratchpad
+todo.txt
+removed_code.txt
+
+# Internal / Python build & helper scripts
+Python/
+__pycache__/
+*.pyc
+
+# Unrelated projects & distributions
+GashWare/
+Space_Defender*
