@@ -2164,6 +2164,13 @@
             const replyForm = document.getElementById('chat-reply-form');
             const replyInput = document.getElementById('chat-reply-input');
             const unreadBadge = document.getElementById('chat-unread-badge');
+            const statusDot = document.getElementById('chat-status-dot');
+            const statusText = document.getElementById('chat-status-text');
+            const onlineDot = document.getElementById('chat-online-dot');
+            const livePillText = document.getElementById('chat-live-pill-text');
+            const intakeTitle = document.getElementById('chat-intake-title');
+            const intakeDesc = document.getElementById('chat-intake-desc');
+            const startBtnText = document.getElementById('chat-start-btn-text');
 
             if (!toggleBtn || !drawer) return;
 
@@ -2173,6 +2180,76 @@
             let customerContact = localStorage.getItem('jgcpu_chat_contact') || '';
             let lastMessageCount = 0;
             let pollInterval = null;
+
+            // Business Hours Evaluation (Central Time - CST)
+            const checkBusinessHours = () => {
+                try {
+                    const now = new Date();
+                    const cstString = now.toLocaleString("en-US", { timeZone: "America/Chicago" });
+                    const cstDate = new Date(cstString);
+                    const day = cstDate.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+                    const hours = cstDate.getHours();
+                    const minutes = cstDate.getMinutes();
+                    const timeDecimal = hours + minutes / 60;
+                    const isWeekend = (day === 0 || day === 6);
+
+                    if (!isWeekend) {
+                        return {
+                            isOpen: (timeDecimal >= 9.0 && timeDecimal < 18.0),
+                            schedule: "Mon–Fri 9AM–6PM CST"
+                        };
+                    } else {
+                        return {
+                            isOpen: (timeDecimal >= 9.0 && timeDecimal < 15.0),
+                            schedule: "Sat–Sun 9AM–3PM CST"
+                        };
+                    }
+                } catch(e) {
+                    return { isOpen: true, schedule: "Mon–Fri 9AM–6PM CST" };
+                }
+            };
+
+            const updateStatusUI = () => {
+                const status = checkBusinessHours();
+                if (status.isOpen) {
+                    if (statusDot) {
+                        statusDot.classList.remove('bg-amber-400');
+                        statusDot.classList.add('bg-emerald-400');
+                    }
+                    if (onlineDot) {
+                        onlineDot.classList.remove('bg-amber-400');
+                        onlineDot.classList.add('bg-emerald-400');
+                    }
+                    if (statusText) {
+                        statusText.textContent = "Online";
+                        statusText.className = "px-1.5 py-0.2 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-400 text-[9px] font-mono font-bold";
+                    }
+                    if (livePillText) livePillText.textContent = "Live Chat";
+                    if (intakeTitle) intakeTitle.textContent = "Have a quick question?";
+                    if (intakeDesc) intakeDesc.textContent = `Direct support from Josh. We reply right away during business hours (${status.schedule}).`;
+                    if (startBtnText) startBtnText.textContent = "Start Live Chat";
+                } else {
+                    if (statusDot) {
+                        statusDot.classList.remove('bg-emerald-400');
+                        statusDot.classList.add('bg-amber-400');
+                    }
+                    if (onlineDot) {
+                        onlineDot.classList.remove('bg-emerald-400');
+                        onlineDot.classList.add('bg-amber-400');
+                    }
+                    if (statusText) {
+                        statusText.textContent = "Offline";
+                        statusText.className = "px-1.5 py-0.2 rounded-full bg-amber-950 border border-amber-500/40 text-amber-400 text-[9px] font-mono font-bold";
+                    }
+                    if (livePillText) livePillText.textContent = "Leave a Message";
+                    if (intakeTitle) intakeTitle.textContent = "Leave a Message";
+                    if (intakeDesc) intakeDesc.textContent = `Live chat is currently closed (${status.schedule}). Leave your message and contact info and Josh will reply as soon as we open!`;
+                    if (startBtnText) startBtnText.textContent = "Send Message";
+                }
+            };
+
+            updateStatusUI();
+            setInterval(updateStatusUI, 60000);
 
             function playCustomerChime() {
                 try {
@@ -2241,15 +2318,17 @@
 
             // First bounce 1.2s after page load
             setTimeout(triggerPillAnimation, 1200);
-
-            // Subtle recurring reminder every 35 seconds
-            setInterval(triggerPillAnimation, 35000);
+            setInterval(triggerPillAnimation, 45000);
 
             const renderMessages = (messages) => {
                 if (!messagesContainer) return;
                 messagesContainer.innerHTML = '';
                 if (messages.length === 0) {
-                    messagesContainer.innerHTML = '<div class="text-center my-auto text-xs text-slate-500 font-mono">Chat started. Josh will reply shortly!</div>';
+                    const status = checkBusinessHours();
+                    const note = status.isOpen 
+                        ? "Chat started. Josh will reply shortly!" 
+                        : "Message received! We will follow up during business hours.";
+                    messagesContainer.innerHTML = `<div class="text-center my-auto text-xs text-slate-400 font-mono">${note}</div>`;
                     return;
                 }
 
@@ -2304,7 +2383,10 @@
 
             const startPolling = () => {
                 stopPolling();
-                pollInterval = setInterval(fetchMessages, 2500);
+                const status = checkBusinessHours();
+                // If open, poll every 3.5s while drawer is open. If closed, poll once every 20s.
+                const intervalMs = status.isOpen ? 3500 : 20000;
+                pollInterval = setInterval(fetchMessages, intervalMs);
             };
 
             const stopPolling = () => {
@@ -2313,12 +2395,6 @@
                     pollInterval = null;
                 }
             };
-
-            if (sessionId) {
-                setInterval(() => {
-                    if (!isOpen) fetchMessages();
-                }, 15000);
-            }
 
             if (intakeForm) {
                 intakeForm.addEventListener('submit', async (e) => {
@@ -2336,7 +2412,7 @@
 
                     const btn = document.getElementById('chat-start-btn');
                     btn.disabled = true;
-                    btn.innerHTML = '<span>Connecting...</span>';
+                    btn.innerHTML = '<span>Sending...</span>';
 
                     try {
                         const res = await fetch(`${API_BASE}/chat/send`, {
@@ -2356,15 +2432,18 @@
                             localStorage.setItem('jgcpu_chat_session_id', sessionId);
                             showActiveChatView();
                             fetchMessages();
-                            startPolling();
+                            const status = checkBusinessHours();
+                            if (status.isOpen) {
+                                startPolling();
+                            }
                         } else {
-                            alert('Could not start chat. Please call (815) 310-0260.');
+                            alert('Could not send message. Please call (815) 310-0260.');
                         }
                     } catch (err) {
                         alert('Could not connect to chat server.');
                     } finally {
                         btn.disabled = false;
-                        btn.innerHTML = '<span>Start Live Chat</span>';
+                        updateStatusUI();
                     }
                 });
             }
@@ -2420,7 +2499,7 @@
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
                 </span>
-                <span>Live Chat</span>
+                <span id="chat-live-pill-text">Live Chat</span>
                 <span class="text-cyan-400 text-[11px]">💬</span>
             </div>
             <!-- Tooltip pointer arrow -->
@@ -2449,12 +2528,12 @@
                 <div class="flex items-center gap-3">
                     <div class="relative w-9 h-9 rounded-full bg-cyan-500/20 border border-cyan-400 flex items-center justify-center font-heading font-extrabold text-cyan-400 text-sm shadow-[0_0_10px_rgba(6,182,212,0.3)]">
                         JG
-                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900"></span>
+                        <span id="chat-status-dot" class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900"></span>
                     </div>
                     <div>
                         <div class="flex items-center gap-1.5">
                             <span class="font-heading font-bold text-white text-sm">Josh | Technician</span>
-                            <span class="px-1.5 py-0.2 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-400 text-[9px] font-mono font-bold">Online</span>
+                            <span id="chat-status-text" class="px-1.5 py-0.2 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-400 text-[9px] font-mono font-bold">Online</span>
                         </div>
                         <p class="text-[11px] text-slate-400">Direct Support &amp; Repair Help</p>
                     </div>
@@ -2470,8 +2549,8 @@
                     <div class="w-12 h-12 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-inner">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
                     </div>
-                    <h4 class="font-heading font-bold text-white text-base">Have a quick question?</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed">Ask about repairs, diagnostics, pricing, or custom builds. We reply right away.</p>
+                    <h4 id="chat-intake-title" class="font-heading font-bold text-white text-base">Have a quick question?</h4>
+                    <p id="chat-intake-desc" class="text-xs text-slate-400 leading-relaxed">Ask about repairs, diagnostics, pricing, or custom builds. We reply right away.</p>
                 </div>
 
                 <form id="chat-intake-form" class="space-y-3 pt-2">
@@ -2488,7 +2567,7 @@
                         <textarea id="chat-input-initial-msg" rows="2" placeholder="Briefly describe what you need help with..." required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400 resize-none font-sans"></textarea>
                     </div>
                     <button type="submit" id="chat-start-btn" class="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-brand-dark font-mono font-bold text-xs transition flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-                        <span>Start Live Chat</span>
+                        <span id="chat-start-btn-text">Start Live Chat</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
                 </form>
