@@ -1,8 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Default to Dark Mode immediately to prevent theme flicker
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('jgcpu_theme');
+                if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                } else {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
     <title>JG Computers | Computer Repair & IT Support in Paducah, KY</title>
     <meta name="description" content="Affordable, expert computer repair & IT support in Paducah, KY. PC/laptop diagnostics, virus removal, OS reinstalls, custom gaming rigs, and onsite service across Paducah, Lone Oak, Reidland & Western KY.">
     <meta name="keywords" content="computer repair paducah ky, pc repair paducah, laptop repair paducah ky, virus removal paducah, it support paducah, custom gaming pc paducah, data recovery paducah ky">
@@ -116,6 +131,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -267,36 +283,291 @@
         /* Ensure options are legible */
         option { background-color: white; color: black; }
         #remote-support option { background-color: #1e293b; color: white; }
+
+        /* Animated matrix canvas - fixed to viewport so it streams seamlessly in dark mode */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            opacity: 0.22;
+            z-index: 0;
+            transition: opacity 0.3s ease;
+        }
+        html:not(.dark) #matrix-canvas {
+            opacity: 0;
+            display: none;
+        }
+
+        /* Stats Horizon Accent Lines - Sci-Fi Laser Extension Animation */
+        .horizon-wing-left {
+            transform-origin: right center;
+            transform: scaleX(0);
+            opacity: 0;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+        }
+
+        /* Live Chat Tooltip Pill Animation: Fade In -> Double Bounce -> Fade Out */
+        @keyframes liveChatBounceFade {
+            0% {
+                opacity: 0;
+                transform: translateY(12px) scale(0.9);
+            }
+            14% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            26% {
+                transform: translateY(-10px) scale(1.04);
+            }
+            38% {
+                transform: translateY(0) scale(1);
+            }
+            48% {
+                transform: translateY(-5px) scale(1.02);
+            }
+            58% {
+                transform: translateY(0) scale(1);
+            }
+            82% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(8px) scale(0.95);
+            }
+        }
+
+        .animate-live-chat-pill {
+            animation: liveChatBounceFade 5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .horizon-wing-right {
+            transform-origin: left center;
+            transform: scaleX(0);
+            opacity: 0;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+        }
+        .horizon-top-laser {
+            transform-origin: center center;
+            transform: scaleX(0);
+            opacity: 0;
+            transition: transform 1.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+        }
+        .stats-visible .horizon-wing-left,
+        .stats-visible .horizon-wing-right,
+        .stats-visible .horizon-top-laser {
+            transform: scaleX(1);
+            opacity: 1;
+        }
+
+        /* Services Cyber Frame & Glowing Laser Perimeter */
+        #services-cyber-frame {
+            position: relative;
+        }
+        .services-border {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .services-border-top {
+            top: 0;
+            left: 14px;
+            right: 14px;
+            height: 2px;
+            background: linear-gradient(90deg, #06b6d4, #38bdf8 30%, #4ade80 50%, #38bdf8 70%, #06b6d4);
+            box-shadow: 0 0 12px #06b6d4, 0 0 24px rgba(6, 182, 212, 0.5);
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+            opacity: 0;
+        }
+        .services-border-bottom {
+            bottom: 0;
+            left: 14px;
+            right: 14px;
+            height: 2px;
+            background: linear-gradient(90deg, #06b6d4, #38bdf8 30%, #4ade80 50%, #38bdf8 70%, #06b6d4);
+            box-shadow: 0 0 12px #06b6d4, 0 0 24px rgba(6, 182, 212, 0.5);
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, opacity 0.8s ease;
+            opacity: 0;
+        }
+        .services-border-left {
+            top: 14px;
+            bottom: 14px;
+            left: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #06b6d4, #38bdf8 50%, #06b6d4);
+            box-shadow: 0 0 12px #06b6d4, 0 0 24px rgba(6, 182, 212, 0.5);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.25s, opacity 0.8s ease;
+            opacity: 0;
+        }
+        .services-border-right {
+            top: 14px;
+            bottom: 14px;
+            right: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #06b6d4, #38bdf8 50%, #06b6d4);
+            box-shadow: 0 0 12px #06b6d4, 0 0 24px rgba(6, 182, 212, 0.5);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.25s, opacity 0.8s ease;
+            opacity: 0;
+        }
+        .services-corner {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+            z-index: 6;
+            opacity: 0;
+            transform: scale(0.6);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.35s;
+        }
+        .services-corner-tl {
+            top: 0;
+            left: 0;
+            border-top: 2.5px solid #38bdf8;
+            border-left: 2.5px solid #38bdf8;
+            border-top-left-radius: 10px;
+            filter: drop-shadow(0 0 8px #06b6d4);
+        }
+        .services-corner-tr {
+            top: 0;
+            right: 0;
+            border-top: 2.5px solid #38bdf8;
+            border-right: 2.5px solid #38bdf8;
+            border-top-right-radius: 10px;
+            filter: drop-shadow(0 0 8px #06b6d4);
+        }
+        .services-corner-bl {
+            bottom: 0;
+            left: 0;
+            border-bottom: 2.5px solid #38bdf8;
+            border-left: 2.5px solid #38bdf8;
+            border-bottom-left-radius: 10px;
+            filter: drop-shadow(0 0 8px #06b6d4);
+        }
+        .services-corner-br {
+            bottom: 0;
+            right: 0;
+            border-bottom: 2.5px solid #38bdf8;
+            border-right: 2.5px solid #38bdf8;
+            border-bottom-right-radius: 10px;
+            filter: drop-shadow(0 0 8px #06b6d4);
+        }
+
+        .services-frame-active .services-border-top,
+        .services-frame-active .services-border-bottom {
+            transform: scaleX(1);
+            opacity: 1;
+        }
+        .services-frame-active .services-border-left,
+        .services-frame-active .services-border-right {
+            transform: scaleY(1);
+            opacity: 1;
+        }
+        .services-frame-active .services-corner {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        html:not(.dark) .services-border-top,
+        html:not(.dark) .services-border-bottom {
+            background: linear-gradient(90deg, #0284c7, #38bdf8 50%, #0284c7);
+            box-shadow: 0 0 8px rgba(2, 132, 199, 0.35);
+        }
+        html:not(.dark) .services-border-left,
+        html:not(.dark) .services-border-right {
+            background: linear-gradient(180deg, #0284c7, #38bdf8 50%, #0284c7);
+            box-shadow: 0 0 8px rgba(2, 132, 199, 0.35);
+        }
+        html:not(.dark) .services-corner {
+            border-color: #0284c7;
+            filter: drop-shadow(0 0 4px rgba(2, 132, 199, 0.4));
+        }
+
+        /* Staggered Entrance Animation for Service Cards */
+        .service-card-item {
+            opacity: 0;
+            transform: translateY(28px) scale(0.97);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .service-card-item.card-revealed {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-slate-800 antialiased selection:bg-cyan-500 selection:text-white overflow-x-hidden">
+<body class="bg-gray-50 dark:bg-brand-dark text-slate-800 dark:text-slate-100 antialiased selection:bg-cyan-500 selection:text-white overflow-x-hidden transition-colors duration-200">
 
+    <!-- Background Matrix Rain Canvas -->
+    <canvas id="matrix-canvas"></canvas>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 transition-all duration-300 bg-brand-dark/90 backdrop-blur-md border-b border-white/10">
+    <nav class="fixed top-0 w-full z-50 transition-all duration-300 bg-brand-dark/95 backdrop-blur-md border-b border-white/10">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex-shrink-0 flex items-center gap-3 z-50">
                     <img src="JG_logo.svg" alt="JG Computers - Computer Repair in Paducah KY" class="h-12 w-auto">
                     <div class="font-heading font-extrabold text-2xl tracking-tight text-white">JG <span class="text-brand-accent">COMPUTERS</span></div>
                 </div>
-                <div class="hidden md:flex items-center space-x-8">
+
+                <!-- Center Serving Location Badge -->
+                <div class="hidden lg:flex items-center justify-center z-50">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/80 border border-cyan-500/40 text-cyan-400 text-xs font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(6,182,212,0.25)] backdrop-blur-md animate-pulse-slow">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_cyan]"></span> System Online: Serving <span id="serving-location" class="inline-block min-w-[90px] text-left transition-opacity duration-500 font-mono text-white font-bold">Paducah</span>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-6">
                     <a href="#services" class="text-sm font-medium text-gray-300 hover:text-white transition">Services</a>
                     <a href="#schedule" class="text-sm font-medium text-gray-300 hover:text-white transition">Schedule</a>
+                    
+                    <!-- Dark / Light Mode Toggle Button (Desktop) -->
+                    <button id="theme-toggle-btn" type="button" aria-label="Toggle Theme" title="Toggle Light / Dark Mode" class="p-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 text-amber-400 hover:text-amber-300 transition-all focus:outline-none flex items-center justify-center shadow-inner cursor-pointer">
+                        <!-- Sun Icon (Shown in Dark Mode) -->
+                        <svg id="theme-icon-sun" class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <!-- Moon Icon (Shown in Light Mode) -->
+                        <svg id="theme-icon-moon" class="w-5 h-5 hidden text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </button>
+
                     <a href="tel:8153100260" class="group relative px-6 py-2.5 rounded-full bg-brand-accent text-white font-bold text-sm shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] transition-all overflow-hidden border border-cyan-400/50">
                         <span class="relative z-10 flex items-center gap-2">Call (815) 310-0260</span>
                         <div class="absolute inset-0 h-full w-full scale-0 rounded-full transition-all duration-300 group-hover:scale-100 group-hover:bg-cyan-500"></div>
                     </a>
                 </div>
-                <div class="md:hidden flex items-center z-50">
+                <div class="md:hidden flex items-center gap-3 z-50">
+                    <!-- Mobile Direct Theme Toggle -->
+                    <button id="mobile-quick-theme-btn" type="button" aria-label="Toggle Theme" class="p-2 rounded-xl bg-slate-800/90 border border-slate-700 text-amber-400 focus:outline-none">
+                        <span id="mobile-quick-theme-icon">☀️</span>
+                    </button>
                     <button id="mobile-menu-btn" class="text-white hover:text-cyan-400 focus:outline-none"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
                 </div>
             </div>
         </div>
         <div id="mobile-menu" class="mobile-menu bg-brand-dark/95 backdrop-blur-xl border-b border-white/10 md:hidden absolute w-full">
-            <div class="px-4 pt-2 pb-6 space-y-2 text-center">
-                <a href="#services" class="block px-3 py-4 text-base font-medium text-gray-300 hover:text-white">Services</a>
-                <a href="#schedule" class="block px-3 py-4 text-base font-medium text-gray-300 hover:text-white">Schedule</a>
+            <div class="px-4 pt-2 pb-6 space-y-3 text-center">
+                <a href="#services" class="block px-3 py-3 text-base font-medium text-gray-300 hover:text-white">Services</a>
+                <a href="#schedule" class="block px-3 py-3 text-base font-medium text-gray-300 hover:text-white">Schedule</a>
+                <div class="pt-2 flex justify-center">
+                    <button id="mobile-theme-toggle-btn" type="button" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-sm font-semibold text-slate-200 hover:text-white">
+                        <span id="mobile-theme-icon">☀️</span>
+                        <span id="mobile-theme-text">Switch to Light Mode</span>
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
@@ -304,16 +575,13 @@
 
 
     <!-- Hero Section -->
-    <div class="relative bg-brand-dark min-h-[95vh] flex items-center overflow-hidden pb-32">
-        <div class="scanlines opacity-20 pointer-events-none"></div>
-        <div class="absolute inset-0 bg-grid-pattern bg-[length:30px_30px] opacity-[0.07] pointer-events-none"></div>
+    <div class="relative bg-brand-dark dark:bg-transparent min-h-[95vh] flex items-center overflow-hidden pb-32">
+        <div class="scanlines opacity-20 pointer-events-none [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"></div>
+        <div class="absolute inset-0 bg-grid-pattern bg-[length:30px_30px] opacity-[0.07] pointer-events-none [mask-image:linear-gradient(to_bottom,black_60%,transparent_100%)]"></div>
         <div class="absolute top-1/4 left-0 w-72 h-72 bg-brand-accent/20 rounded-full blur-[100px] animate-float opacity-60 pointer-events-none"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px] animate-float-delayed opacity-60 pointer-events-none"></div>
+        <div class="absolute top-1/3 right-4 w-72 h-72 bg-blue-600/15 rounded-full blur-[90px] animate-float-delayed opacity-50 pointer-events-none"></div>
         <div class="relative container mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center z-10 pt-10">
             <div class="text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/60 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-8 shadow-[0_0_15px_rgba(6,182,212,0.2)] backdrop-blur-sm animate-pulse-slow">
-                    <span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_cyan]"></span> System Online: Serving <span id="serving-location" class="inline-block min-w-[100px] text-left transition-opacity duration-500">Paducah</span>
-                </div>
                 <h1 class="font-heading text-5xl sm:text-7xl lg:text-8xl font-extrabold text-white leading-none mb-4">
                     <div class="mb-2">TECH SUPPORT</div>
                     <!-- Easter Egg Target: ID Added -->
@@ -360,269 +628,335 @@
         </div>
     </div>
 
-    <!-- Stats Banner -->
-    <div class="relative z-20 -mt-10 mx-4 sm:mx-8 lg:mx-auto max-w-6xl pointer-events-none">
-        <div class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-2xl p-8 lg:p-12 pointer-events-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-200">
-                <div class="text-center px-4"><div class="text-4xl font-heading font-extrabold text-brand-primary mb-1">20+</div><div class="text-xs text-gray-500 font-bold uppercase tracking-widest">Years Experience</div></div>
-                <div class="text-center px-4"><div class="text-4xl font-heading font-extrabold text-brand-primary mb-1">120</div><div class="text-xs text-gray-500 font-bold uppercase tracking-widest">Day Warranty</div></div>
-                <div class="text-center px-4"><div class="text-4xl font-heading font-extrabold text-brand-primary mb-1">24hr</div><div class="text-xs text-gray-500 font-bold uppercase tracking-widest">Avg Turnaround</div></div>
+    <!-- Stats Banner with Curved Horizon Connector -->
+    <div id="stats-banner-container" class="relative z-20 -mt-12 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pointer-events-none">
+        <div class="relative flex items-center justify-center">
+            <!-- Left Wing Horizon Line in Dark Mode -->
+            <div class="horizon-wing-left hidden md:block flex-1 h-[1.5px] bg-gradient-to-r from-transparent via-cyan-500/30 to-cyan-400 mr-4 shadow-[0_0_8px_rgba(6,182,212,0.6)] pointer-events-none"></div>
+
+            <!-- Stats Banner Card -->
+            <div class="w-full max-w-5xl relative bg-white dark:bg-[#0c1424] backdrop-blur-2xl border border-gray-200/80 dark:border-cyan-500/40 rounded-3xl shadow-xl dark:shadow-[0_0_30px_rgba(6,182,212,0.18)] p-8 lg:p-10 pointer-events-auto transition-all duration-300 overflow-hidden">
+                
+                <!-- Cyber Light Accent Line on Top Border -->
+                <div class="horizon-top-laser absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 dark:opacity-90 shadow-[0_0_10px_cyan]"></div>
+                
+                <!-- Ambient Corner Glows in Dark Mode -->
+                <div class="absolute -top-20 -left-20 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none hidden dark:block"></div>
+                <div class="absolute -bottom-20 -right-20 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none hidden dark:block"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-slate-800 relative z-10">
+                    <!-- Stat 1: Experience -->
+                    <div class="text-center px-4 pt-4 md:pt-0 group cursor-default">
+                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 dark:bg-cyan-950/60 text-brand-accent dark:text-cyan-400 mb-3 border border-transparent dark:border-cyan-500/30 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        </div>
+                        <div class="text-4xl sm:text-5xl font-heading font-extrabold text-brand-primary dark:text-cyan-400 mb-1.5 tracking-tight">20+</div>
+                        <div class="text-xs text-gray-500 dark:text-slate-400 font-bold uppercase tracking-widest">Years Experience</div>
+                    </div>
+
+                    <!-- Stat 2: Warranty -->
+                    <div class="text-center px-4 pt-6 md:pt-0 group cursor-default">
+                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 mb-3 border border-transparent dark:border-emerald-500/30 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div class="text-4xl sm:text-5xl font-heading font-extrabold text-brand-primary dark:text-emerald-400 mb-1.5 tracking-tight">120</div>
+                        <div class="text-xs text-gray-500 dark:text-slate-400 font-bold uppercase tracking-widest">Day Warranty</div>
+                    </div>
+
+                    <!-- Stat 3: Turnaround -->
+                    <div class="text-center px-4 pt-6 md:pt-0 group cursor-default">
+                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-yellow-50 dark:bg-amber-950/60 text-yellow-600 dark:text-yellow-400 mb-3 border border-transparent dark:border-yellow-500/30 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <div class="text-4xl sm:text-5xl font-heading font-extrabold text-brand-primary dark:text-amber-400 mb-1.5 tracking-tight">24hr</div>
+                        <div class="text-xs text-gray-500 dark:text-slate-400 font-bold uppercase tracking-widest">Avg Turnaround</div>
+                    </div>
+                </div>
             </div>
+
+            <!-- Right Wing Horizon Line in Dark Mode -->
+            <div class="horizon-wing-right hidden md:block flex-1 h-[1.5px] bg-gradient-to-l from-transparent via-cyan-500/30 to-cyan-400 ml-4 shadow-[0_0_8px_rgba(6,182,212,0.6)] pointer-events-none"></div>
         </div>
     </div>
 
     <!-- Services Section -->
-    <section id="services" class="py-20 bg-gray-50 border-t border-gray-200 scroll-mt-32">
+    <section id="services" class="py-20 bg-gray-50 dark:bg-transparent border-t border-gray-200 dark:border-transparent scroll-mt-32 transition-colors duration-200">
         <div class="container mx-auto px-4 sm:px-6 text-center">
-            <h2 class="font-heading text-3xl font-bold text-gray-900 mb-12">Core Services</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            <h2 class="font-heading text-3xl font-bold text-gray-900 dark:text-white mb-12">Core Services</h2>
+            
+            <!-- Cyber Glow Frame around all Service Cards -->
+            <div id="services-cyber-frame" class="relative max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 rounded-3xl transition-all duration-700">
+                <!-- Glowing Perimeter Laser Lines -->
+                <div class="services-border services-border-top"></div>
+                <div class="services-border services-border-bottom"></div>
+                <div class="services-border services-border-left"></div>
+                <div class="services-border services-border-right"></div>
                 
-                <!-- PC Repair (Enhanced) -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-brand-accent transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-brand-accent transition-colors duration-300">
-                            <svg class="w-6 h-6 text-brand-accent group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">Diag $40</span>
-                    </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">PC & Laptop Repair</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-4 text-left">We breathe new life into broken devices. From cracked screens and battery replacements to complex motherboard diagnostics and liquid damage recovery.</p>
-                    <p class="text-xs text-green-600 font-bold mb-3 text-left">Diagnostic fee is fully credited towards labor if you proceed with the repair.</p>
-                    <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div> Hardware Diagnostics</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div> Component Replacement</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div> Water Damage Repair</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div> Screen & Battery Swaps</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div> Motherboard Soldering</li>
-                    </ul>
-                </div>
-                
-                 <!-- System Tune-Up (Restored) -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center group-hover:bg-yellow-500 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-yellow-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">Flat Rate $70</span>
-                    </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">System Tune-Up</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">Is your computer running slow? We optimize startup, remove junk files, and deep clean your system registry to restore peak performance.</p>
-                                        <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> OS Optimization</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> Malware Removal</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> Driver Updates</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> Dust Cleaning & Thermal Paste</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> Startup Speed Tuning</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> Hardened Firefox & Ad Shielding</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> Registry Repair</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> Software Debloat</li>
-                    </ul>
-                </div>
+                <!-- Sci-Fi Corner Accents -->
+                <div class="services-corner services-corner-tl"></div>
+                <div class="services-corner services-corner-tr"></div>
+                <div class="services-corner services-corner-bl"></div>
+                <div class="services-corner services-corner-br"></div>
 
-                <!-- OS Reinstall & Recovery -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-600 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-emerald-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <!-- 1. PC Repair (Enhanced) -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-brand-accent transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-blue-50 dark:bg-cyan-950/40 dark:border dark:border-cyan-500/20 rounded-xl flex items-center justify-center group-hover:bg-brand-accent dark:group-hover:bg-cyan-500 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-brand-accent dark:text-cyan-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">Diag $40</span>
                         </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">Flat Rate $90</span>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">PC &amp; Laptop Repair</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">We breathe new life into broken devices. From cracked screens and battery replacements to complex motherboard diagnostics and liquid damage recovery.</p>
+                        <p class="text-xs text-green-600 dark:text-green-400 font-medium mb-3 text-left">Diagnostic fee is fully credited towards labor if you proceed with the repair.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Hardware Diagnostics</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Component Replacement</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Water Damage Repair</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Screen &amp; Battery Swaps</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Motherboard Soldering</li>
+                        </ul>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">OS Reinstall & Recovery</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">For heavily corrupted, boot-looping, or infected systems. Complete drive reformat, clean OS install, driver setup, Firefox profile migration with ad-shielding, and turnkey software setup.</p>
-                    <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Drive Reformat & Deep Clean Wipe</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Clean Windows 11/10 or macOS Install</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Hardened Firefox + Ad/Malware Shield</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Chrome Profile & Bookmark Migration</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Essential Software & Office Setup</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Driver & BIOS Firmware Updates</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Optional Personal File Backup (+Add-on)</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Stress Testing & Boot Verification</li>
-                    </ul>
-                </div>
-
-                <!-- Onsite Repair -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center group-hover:bg-orange-500 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-orange-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    
+                    <!-- 2. System Tune-Up (Restored) -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-yellow-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-yellow-50 dark:bg-amber-950/40 dark:border dark:border-yellow-500/20 rounded-xl flex items-center justify-center group-hover:bg-yellow-500 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">Flat Rate $70</span>
                         </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">$70/hr + Travel</span>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">System Tune-Up</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">Is your computer running slow? We optimize startup, remove junk files, and deep clean your system registry to restore peak performance.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div> OS Optimization</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div> Malware Removal</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div> Driver Updates</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div> Dust Cleaning &amp; Thermal Paste</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div> Startup Speed Tuning</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div> Hardened Firefox &amp; Ad Shielding</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div> Registry Repair</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-yellow-400 rounded-full"></div> Software Debloat</li>
+                        </ul>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">Onsite Repair</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">We come to your home or office. Perfect for network issues, smart home setup, or bulky desktop systems.</p>
-                                        <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Business IT Support</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Smart Home Setup</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Printer & Peripheral Setup</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Network Troubleshooting</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> In-Home Device Training</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Hardware Installation</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Wi-Fi Deadzone Fixes</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Virus Removal</li>
-                    </ul>
-                </div>
 
-                <!-- Networking & VPNs -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-cyan-50 rounded-xl flex items-center justify-center group-hover:bg-cyan-600 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-cyan-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                    <!-- 3. OS Reinstall & Recovery -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-950/40 dark:border dark:border-emerald-500/20 rounded-xl flex items-center justify-center group-hover:bg-emerald-600 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">Flat Rate $90</span>
                         </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">From $90</span>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">OS Reinstall &amp; Recovery</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">For heavily corrupted, boot-looping, or infected systems. Complete drive reformat, clean OS install, driver setup, Firefox profile migration with ad-shielding, and turnkey software setup.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Drive Reformat &amp; Deep Clean Wipe</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Clean Windows 11/10 or macOS Install</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Hardened Firefox + Ad/Malware Shield</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Chrome Profile &amp; Bookmark Migration</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Essential Software &amp; Office Setup</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Driver &amp; BIOS Firmware Updates</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Optional Personal File Backup (+Add-on)</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></div> Stress Testing &amp; Boot Verification</li>
+                        </ul>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">Networking & VPNs</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">Eliminate Wi-Fi dead zones. We setup secure routers, mesh networks, and corporate VPN access.</p>
-                                        <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div> Mesh Wi-Fi Setup</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div> Secure VPN Config</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div> Network Troubleshooting</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div> Custom Firewall Rules</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div> Cabling & Drops</li>
-                    </ul>
-                </div>
 
-                <!-- Data Recovery -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center group-hover:bg-purple-600 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-purple-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    <!-- 4. Onsite Repair -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-orange-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-orange-50 dark:bg-orange-950/40 dark:border dark:border-orange-500/20 rounded-xl flex items-center justify-center group-hover:bg-orange-500 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-orange-500 dark:text-orange-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">$70/hr + Travel</span>
                         </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">From $90</span>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">Onsite Repair</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">We come to your home or office. Perfect for network issues, smart home setup, or bulky desktop systems.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Business IT Support</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Smart Home Setup</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Printer &amp; Peripheral Setup</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Network Troubleshooting</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> In-Home Device Training</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Hardware Installation</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Wi-Fi Deadzone Fixes</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Virus Removal</li>
+                        </ul>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">Data Recovery</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">Accidentally deleted files or failing hard drive? We use advanced tools to securely recover your precious data.</p>
-                                        <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div> Hard Drive Recovery</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div> USB/SD Card Recovery</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div> Secure Data Wiping</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div> Corrupt Partition Fixes</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div> Forensic Data Extraction</li>
-                    </ul>
-                </div>
 
-                <!-- Custom Gaming -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-pink-50 rounded-xl flex items-center justify-center group-hover:bg-pink-600 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-pink-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <!-- 5. Networking & VPNs -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-cyan-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-cyan-50 dark:bg-cyan-950/40 dark:border dark:border-cyan-500/20 rounded-xl flex items-center justify-center group-hover:bg-cyan-600 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-cyan-500 dark:text-cyan-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">From $90</span>
                         </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">Build Fee $100</span>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">Networking &amp; VPNs</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">Eliminate Wi-Fi dead zones. We setup secure routers, mesh networks, and corporate VPN access.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div> Mesh Wi-Fi Setup</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div> Secure VPN Config</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div> Network Troubleshooting</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div> Custom Firewall Rules</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div> Cabling &amp; Drops</li>
+                        </ul>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">Custom Gaming Rigs</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">We design and build bespoke gaming PCs tailored to your budget and performance requirements.</p>
-                                        <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-pink-500 rounded-full"></div> Parts Consultation</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-pink-500 rounded-full"></div> Professional Assembly</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-pink-500 rounded-full"></div> Cable Management</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-pink-500 rounded-full"></div> Custom Liquid Cooling</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-pink-500 rounded-full"></div> Overclocking & Stress Tests</li>
-                    </ul>
-                </div>
 
-                <!-- Cyber Security -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center group-hover:bg-red-600 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-red-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <!-- 6. Data Recovery -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-purple-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-purple-50 dark:bg-purple-950/40 dark:border dark:border-purple-500/20 rounded-xl flex items-center justify-center group-hover:bg-purple-600 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-purple-600 dark:text-purple-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">From $90</span>
                         </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">Audit $150+</span>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">Data Recovery</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">Accidentally deleted files or failing hard drive? We use advanced tools to securely recover your precious data.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div> Hard Drive Recovery</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div> USB/SD Card Recovery</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div> Secure Data Wiping</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div> Corrupt Partition Fixes</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-400 rounded-full"></div> Forensic Data Extraction</li>
+                        </ul>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">Cyber Security</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">Protect your business from ransomware and data breaches. Comprehensive security audits and employee training.</p>
-                                        <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Vulnerability Scanning</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Firewall Configuration</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Employee Security Training</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Phishing Simulations</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Threat Mitigation Plans</li>
-                    </ul>
-                </div>
 
-
-                <!-- Web Design -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center group-hover:bg-indigo-600 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-indigo-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                    <!-- 7. Custom Gaming -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-pink-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-pink-50 dark:bg-pink-950/40 dark:border dark:border-pink-500/20 rounded-xl flex items-center justify-center group-hover:bg-pink-600 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-pink-600 dark:text-pink-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">Build Fee $100</span>
                         </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">Free Consult</span>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">Custom Gaming Rigs</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">We design and build bespoke gaming PCs tailored to your budget and performance requirements.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-pink-400 rounded-full"></div> Parts Consultation</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-pink-400 rounded-full"></div> Professional Assembly</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-pink-400 rounded-full"></div> Cable Management</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-pink-400 rounded-full"></div> Custom Liquid Cooling</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-pink-400 rounded-full"></div> Overclocking &amp; Stress Tests</li>
+                        </ul>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">Web Design</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">Modern, fast, and responsive websites for small businesses. Stand out online and attract more local customers.</p>
-                                        <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> Custom UI/UX</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> SEO Optimization</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> Reliable Hosting</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> E-Commerce Integration</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></div> Ongoing Maintenance</li>
-                    </ul>
-                </div>
 
-                <!-- Database Services -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-cyan-50 rounded-xl flex items-center justify-center group-hover:bg-cyan-600 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-cyan-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                    <!-- 8. Cyber Security -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-red-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-red-50 dark:bg-red-950/40 dark:border dark:border-red-500/20 rounded-xl flex items-center justify-center group-hover:bg-red-600 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-red-600 dark:text-red-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">Audit $150+</span>
                         </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">From $130</span>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">Cyber Security</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">Protect your business from ransomware and data breaches. Comprehensive security audits and employee training.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-400 rounded-full"></div> Vulnerability Scanning</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-400 rounded-full"></div> Firewall Configuration</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-400 rounded-full"></div> Employee Security Training</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-400 rounded-full"></div> Phishing Simulations</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-red-400 rounded-full"></div> Threat Mitigation Plans</li>
+                        </ul>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">Database Services</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">SQL/NoSQL design, optimization, and administration. Ensure your company data is structured and fast.</p>
-                                        <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div> Schema Design</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div> Query Optimization</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div> Automated Backups</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div> Replication Setup</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></div> Legacy Data Migration</li>
-                    </ul>
-                </div>
 
-                <!-- Data Migration -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center group-hover:bg-orange-500 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-orange-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                    <!-- 9. Web Design -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-950/40 dark:border dark:border-indigo-500/20 rounded-xl flex items-center justify-center group-hover:bg-indigo-600 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">Free Consult</span>
                         </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">From $70</span>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">Web Design</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">Modern, fast, and responsive websites for small businesses. Stand out online and attract more local customers.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></div> Custom UI/UX</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></div> SEO Optimization</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></div> Reliable Hosting</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></div> E-Commerce Integration</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-indigo-400 rounded-full"></div> Ongoing Maintenance</li>
+                        </ul>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">Data Migration</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">Secure transfer of files, photos, passwords, and profiles between computers, servers, or cloud storage.</p>
-                                        <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> PC-to-PC File & Photo Transfer</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Browser Profile & Password Migration</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Server-to-Cloud Transfers</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Legacy System Export</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-500 rounded-full"></div> Zero-Downtime Strategy</li>
-                    </ul>
-                </div>
 
-                <!-- Software Development -->
-                <div class="flex flex-col h-full bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-800 transition-colors duration-300">
-                            <svg class="w-6 h-6 text-gray-700 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                    <!-- 10. Database Services -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-cyan-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-cyan-50 dark:bg-cyan-950/40 dark:border dark:border-cyan-500/20 rounded-xl flex items-center justify-center group-hover:bg-cyan-600 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">From $130</span>
                         </div>
-                        <span class="bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold px-3 py-1 rounded-full">Custom Quote</span>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">Database Services</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">SQL/NoSQL design, optimization, and administration. Ensure your company data is structured and fast.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div> Schema Design</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div> Query Optimization</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div> Automated Backups</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div> Replication Setup</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div> Legacy Data Migration</li>
+                        </ul>
                     </div>
-                    <h3 class="font-bold text-xl text-gray-900 mb-3 text-left">Software Dev</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed text-left">Custom software tailored to your specific business needs, and legacy application modernization for Windows 11 environments.</p>
-                    <ul class="mt-auto text-xs text-gray-500 space-y-2 border-t border-gray-100 pt-4 text-left">
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-gray-500 rounded-full"></div> Custom Business Apps</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-gray-500 rounded-full"></div> Legacy App Modernization</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-gray-500 rounded-full"></div> API Integration & Automation</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-gray-500 rounded-full"></div> Mobile App Development</li>
-                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-gray-500 rounded-full"></div> Cloud & Database Integration</li>
-                    </ul>
-                </div>
 
+                    <!-- 11. Data Migration -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-orange-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-orange-50 dark:bg-orange-950/40 dark:border dark:border-orange-500/20 rounded-xl flex items-center justify-center group-hover:bg-orange-500 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-orange-500 dark:text-orange-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">From $70</span>
+                        </div>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">Data Migration</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">Secure transfer of files, photos, passwords, and profiles between computers, servers, or cloud storage.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> PC-to-PC File &amp; Photo Transfer</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Browser Profile &amp; Password Migration</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Server-to-Cloud Transfers</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Legacy System Export</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div> Zero-Downtime Strategy</li>
+                        </ul>
+                    </div>
+
+                    <!-- 12. Software Development -->
+                    <div class="service-card-item flex flex-col h-full bg-white dark:bg-[#0c121e] p-8 rounded-2xl shadow-sm hover:shadow-xl dark:shadow-none border border-gray-100 dark:border-slate-800 dark:hover:border-slate-700 transition-all duration-300 group relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-slate-500 transform -translate-x-1 group-hover:translate-x-0 transition-transform"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 bg-gray-100 dark:bg-slate-800 dark:border dark:border-slate-700/60 rounded-xl flex items-center justify-center group-hover:bg-gray-800 dark:group-hover:bg-slate-700 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-gray-700 dark:text-slate-300 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                            </div>
+                            <span class="bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 text-xs font-bold px-3 py-1 rounded-full">Custom Quote</span>
+                        </div>
+                        <h3 class="font-bold text-xl text-gray-900 dark:text-white mb-3 text-left">Software Dev</h3>
+                        <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed mb-4 text-left">Custom software tailored to your specific business needs, and legacy application modernization for Windows 11 environments.</p>
+                        <ul class="mt-auto text-xs text-gray-500 dark:text-slate-300 space-y-2 border-t border-gray-100 dark:border-slate-800/80 pt-4 text-left">
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-slate-400 rounded-full"></div> Custom Business Apps</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-slate-400 rounded-full"></div> Legacy App Modernization</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-slate-400 rounded-full"></div> API Integration &amp; Automation</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-slate-400 rounded-full"></div> Mobile App Development</li>
+                            <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-slate-400 rounded-full"></div> Cloud &amp; Database Integration</li>
+                        </ul>
+                    </div>
+
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Schedule Section -->
-    <section id="schedule" class="py-24 bg-brand-dark text-white border-t border-slate-800 scroll-mt-20 relative overflow-hidden">
+    <section id="schedule" class="py-24 bg-brand-dark dark:bg-transparent text-white border-t border-slate-800 dark:border-transparent scroll-mt-20 relative overflow-hidden">
         <!-- Ambient Glow Backgrounds -->
         <div class="absolute top-1/3 left-0 w-96 h-96 bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none"></div>
         <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[140px] pointer-events-none"></div>
@@ -1048,7 +1382,7 @@
     </section>
     
     <!-- FOOTER -->
-    <footer class="bg-brand-dark border-t border-slate-800 pt-16 pb-8 text-slate-400 text-sm">
+    <footer class="bg-brand-dark dark:bg-black/60 border-t border-slate-800 dark:border-slate-800/80 pt-16 pb-8 text-slate-400 text-sm backdrop-blur-md">
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
@@ -1645,12 +1979,429 @@
             }
         };
 
+        // --- THEME CONTROLLER (Default Dark Mode) ---
+        const initTheme = () => {
+            const applyTheme = (theme) => {
+                const isDark = theme === 'dark';
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
+                }
+                try {
+                    localStorage.setItem('jgcpu_theme', theme);
+                } catch (e) {}
+
+                // Update desktop sun/moon icons
+                const sunIcon = document.getElementById('theme-icon-sun');
+                const moonIcon = document.getElementById('theme-icon-moon');
+                if (sunIcon && moonIcon) {
+                    if (isDark) {
+                        sunIcon.classList.remove('hidden');
+                        moonIcon.classList.add('hidden');
+                    } else {
+                        sunIcon.classList.add('hidden');
+                        moonIcon.classList.remove('hidden');
+                    }
+                }
+
+                // Update mobile toggle buttons
+                const mobileText = document.getElementById('mobile-theme-text');
+                const mobileIcon = document.getElementById('mobile-theme-icon');
+                const mobileQuickIcon = document.getElementById('mobile-quick-theme-icon');
+                if (mobileText && mobileIcon) {
+                    mobileText.textContent = isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+                    mobileIcon.textContent = isDark ? '☀️' : '🌙';
+                }
+                if (mobileQuickIcon) {
+                    mobileQuickIcon.textContent = isDark ? '☀️' : '🌙';
+                }
+            };
+
+            const toggleTheme = () => {
+                const currentIsDark = document.documentElement.classList.contains('dark');
+                applyTheme(currentIsDark ? 'light' : 'dark');
+            };
+
+            document.getElementById('theme-toggle-btn')?.addEventListener('click', toggleTheme);
+            document.getElementById('mobile-theme-toggle-btn')?.addEventListener('click', toggleTheme);
+            document.getElementById('mobile-quick-theme-btn')?.addEventListener('click', toggleTheme);
+
+            // Read saved preference or default to dark
+            let initialTheme = 'dark';
+            try {
+                const saved = localStorage.getItem('jgcpu_theme');
+                if (saved === 'light' || saved === 'dark') {
+                    initialTheme = saved;
+                }
+            } catch (e) {}
+
+            applyTheme(initialTheme);
+        };
+
+        // --- FULL-PAGE MATRIX RAIN BACKGROUND (Dark Mode) ---
+        const initMatrixCanvas = () => {
+            const canvas = document.getElementById('matrix-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            const chars = '0123456789ABCDEFѦЖJGCPU⚡ｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ';
+            const fontSize = 14;
+            let columns = Math.floor(width / fontSize);
+            let drops = Array(columns).fill(1).map(() => Math.floor(Math.random() * -60));
+
+            const resizeCanvas = () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                columns = Math.floor(width / fontSize);
+                drops = Array(columns).fill(1).map(() => Math.floor(Math.random() * -40));
+            };
+
+            window.addEventListener('resize', resizeCanvas);
+
+            function drawMatrix() {
+                if (!document.documentElement.classList.contains('dark')) {
+                    ctx.clearRect(0, 0, width, height);
+                    return;
+                }
+
+                ctx.fillStyle = 'rgba(5, 10, 20, 0.055)';
+                ctx.fillRect(0, 0, width, height);
+
+                ctx.fillStyle = '#06b6d4';
+                ctx.font = fontSize + 'px "Fira Code", monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    if (drops[i] >= 0) {
+                        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    }
+
+                    if (drops[i] * fontSize > height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            setInterval(drawMatrix, 40);
+        };
+
+        // --- HORIZON ACCENT SCROLL OBSERVER ---
+        const initHorizonObserver = () => {
+            const banner = document.getElementById('stats-banner-container');
+            if (!banner) return;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        banner.classList.add('stats-visible');
+                    }
+                });
+            }, { threshold: 0.15 });
+            observer.observe(banner);
+        };
+
+        // --- CORE SERVICES CYBER FRAME & CARDS SCROLL OBSERVER ---
+        const initServicesObserver = () => {
+            const frame = document.getElementById('services-cyber-frame');
+            if (frame) {
+                const frameObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            frame.classList.add('services-frame-active');
+                        }
+                    });
+                }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+                frameObserver.observe(frame);
+            }
+
+            const cards = document.querySelectorAll('.service-card-item');
+            if (cards.length > 0) {
+                const cardObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const index = Array.from(cards).indexOf(entry.target);
+                            const delay = (index % 3) * 110;
+                            setTimeout(() => {
+                                entry.target.classList.add('card-revealed');
+                            }, delay);
+                            cardObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+
+                cards.forEach(card => cardObserver.observe(card));
+            }
+        };
+
         // Initialize when DOM is ready
         const bootstrap = () => {
+            try { initTheme(); } catch (e) { console.error('Theme init error:', e); }
+            try { initMatrixCanvas(); } catch (e) { console.error('MatrixCanvas init error:', e); }
+            try { initHorizonObserver(); } catch (e) { console.error('HorizonObserver error:', e); }
+            try { initServicesObserver(); } catch (e) { console.error('ServicesObserver error:', e); }
             try { initScheduler(); } catch (e) { console.error('Scheduler init error:', e); }
             try { initTerminal(); } catch (e) { console.error('Terminal init error:', e); }
             try { initWordEgg(); } catch (e) { console.error('WordEgg init error:', e); }
             try { initLocationCycling(); } catch (e) { console.error('LocationCycling init error:', e); }
+            try { initLiveChat(); } catch (e) { console.error('LiveChat init error:', e); }
+        };
+
+        // --- LIVE CHAT CUSTOMER WIDGET CONTROLLER ---
+        const initLiveChat = () => {
+            const API_BASE = "https://jgcpu-scheduler-api.jgcpus.workers.dev/api";
+            const toggleBtn = document.getElementById('chat-widget-toggle');
+            const drawer = document.getElementById('chat-drawer');
+            const iconOpen = document.getElementById('chat-icon-open');
+            const iconClose = document.getElementById('chat-icon-close');
+            const closeBtn = document.getElementById('chat-close-btn');
+            const intakeScreen = document.getElementById('chat-intake-screen');
+            const intakeForm = document.getElementById('chat-intake-form');
+            const messagesContainer = document.getElementById('chat-messages-container');
+            const replyForm = document.getElementById('chat-reply-form');
+            const replyInput = document.getElementById('chat-reply-input');
+            const unreadBadge = document.getElementById('chat-unread-badge');
+
+            if (!toggleBtn || !drawer) return;
+
+            let isOpen = false;
+            let sessionId = localStorage.getItem('jgcpu_chat_session_id');
+            let customerName = localStorage.getItem('jgcpu_chat_name') || '';
+            let customerContact = localStorage.getItem('jgcpu_chat_contact') || '';
+            let lastMessageCount = 0;
+            let pollInterval = null;
+
+            function playCustomerChime() {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } catch(e) {}
+            }
+
+            const showActiveChatView = () => {
+                if (intakeScreen) intakeScreen.classList.add('hidden');
+                if (messagesContainer) {
+                    messagesContainer.classList.remove('hidden');
+                    messagesContainer.classList.add('flex');
+                }
+                if (replyForm) {
+                    replyForm.classList.remove('hidden');
+                    replyForm.classList.add('flex');
+                }
+            };
+
+            const toggleChat = () => {
+                isOpen = !isOpen;
+                const pill = document.getElementById('chat-live-pill');
+                if (pill) pill.classList.remove('animate-live-chat-pill');
+
+                if (isOpen) {
+                    drawer.classList.remove('hidden');
+                    iconOpen.classList.add('hidden');
+                    iconClose.classList.remove('hidden');
+                    if (unreadBadge) unreadBadge.classList.add('hidden');
+                    if (sessionId) {
+                        showActiveChatView();
+                        fetchMessages();
+                    }
+                    startPolling();
+                } else {
+                    drawer.classList.add('hidden');
+                    iconOpen.classList.remove('hidden');
+                    iconClose.classList.add('hidden');
+                    stopPolling();
+                }
+            };
+
+            toggleBtn.addEventListener('click', toggleChat);
+            if (closeBtn) closeBtn.addEventListener('click', toggleChat);
+
+            // Animate "Live Chat" tooltip above chat icon (fades in, bounces, then fades out)
+            const triggerPillAnimation = () => {
+                const pill = document.getElementById('chat-live-pill');
+                if (pill && !isOpen) {
+                    pill.classList.remove('animate-live-chat-pill');
+                    void pill.offsetWidth; // force reflow
+                    pill.classList.add('animate-live-chat-pill');
+                }
+            };
+
+            // First bounce 1.2s after page load
+            setTimeout(triggerPillAnimation, 1200);
+
+            // Subtle recurring reminder every 35 seconds
+            setInterval(triggerPillAnimation, 35000);
+
+            const renderMessages = (messages) => {
+                if (!messagesContainer) return;
+                messagesContainer.innerHTML = '';
+                if (messages.length === 0) {
+                    messagesContainer.innerHTML = '<div class="text-center my-auto text-xs text-slate-500 font-mono">Chat started. Josh will reply shortly!</div>';
+                    return;
+                }
+
+                messages.forEach(m => {
+                    const isCustomer = m.sender === 'Customer';
+                    const bubble = document.createElement('div');
+                    bubble.className = `flex flex-col ${isCustomer ? 'items-end self-end' : 'items-start self-start'} max-w-[85%]`;
+                    
+                    const timeStr = new Date(m.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    
+                    bubble.innerHTML = `
+                        <div class="px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed ${isCustomer ? 'bg-cyan-500 text-brand-dark font-medium rounded-br-none shadow-sm' : 'bg-slate-800 border border-slate-700 text-white rounded-bl-none shadow-sm'}">
+                            ${escapeHtml(m.message)}
+                        </div>
+                        <span class="text-[9px] font-mono text-slate-500 mt-1 px-1">${isCustomer ? 'You' : 'Josh (Tech)'} • ${timeStr}</span>
+                    `;
+                    messagesContainer.appendChild(bubble);
+                });
+
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            };
+
+            const escapeHtml = (str) => {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            };
+
+            const fetchMessages = async () => {
+                if (!sessionId) return;
+                try {
+                    const res = await fetch(`${API_BASE}/chat/messages?sessionId=${encodeURIComponent(sessionId)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.messages) {
+                            if (data.messages.length > lastMessageCount) {
+                                const newMsgs = data.messages.slice(lastMessageCount);
+                                const hasTechReply = newMsgs.some(m => m.sender === 'Tech');
+                                if (hasTechReply && lastMessageCount > 0) {
+                                    playCustomerChime();
+                                    if (!isOpen && unreadBadge) {
+                                        unreadBadge.classList.remove('hidden');
+                                    }
+                                }
+                                lastMessageCount = data.messages.length;
+                                renderMessages(data.messages);
+                            }
+                        }
+                    }
+                } catch(e) {}
+            };
+
+            const startPolling = () => {
+                stopPolling();
+                pollInterval = setInterval(fetchMessages, 2500);
+            };
+
+            const stopPolling = () => {
+                if (pollInterval) {
+                    clearInterval(pollInterval);
+                    pollInterval = null;
+                }
+            };
+
+            if (sessionId) {
+                setInterval(() => {
+                    if (!isOpen) fetchMessages();
+                }, 15000);
+            }
+
+            if (intakeForm) {
+                intakeForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const nameInput = document.getElementById('chat-input-name').value.trim();
+                    const contactInput = document.getElementById('chat-input-contact').value.trim();
+                    const initialMsg = document.getElementById('chat-input-initial-msg').value.trim();
+
+                    if (!nameInput || !contactInput || !initialMsg) return;
+
+                    customerName = nameInput;
+                    customerContact = contactInput;
+                    localStorage.setItem('jgcpu_chat_name', customerName);
+                    localStorage.setItem('jgcpu_chat_contact', customerContact);
+
+                    const btn = document.getElementById('chat-start-btn');
+                    btn.disabled = true;
+                    btn.innerHTML = '<span>Connecting...</span>';
+
+                    try {
+                        const res = await fetch(`${API_BASE}/chat/send`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                customerName,
+                                customerContact,
+                                message: initialMsg,
+                                deviceInfo: navigator.userAgent.slice(0, 80)
+                            })
+                        });
+
+                        if (res.ok) {
+                            const data = await res.json();
+                            sessionId = data.sessionId;
+                            localStorage.setItem('jgcpu_chat_session_id', sessionId);
+                            showActiveChatView();
+                            fetchMessages();
+                            startPolling();
+                        } else {
+                            alert('Could not start chat. Please call (815) 310-0260.');
+                        }
+                    } catch (err) {
+                        alert('Could not connect to chat server.');
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = '<span>Start Live Chat</span>';
+                    }
+                });
+            }
+
+            if (replyForm) {
+                replyForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const text = replyInput.value.trim();
+                    if (!text || !sessionId) return;
+                    replyInput.value = '';
+
+                    const bubble = document.createElement('div');
+                    bubble.className = 'flex flex-col items-end self-end max-w-[85%]';
+                    bubble.innerHTML = `
+                        <div class="px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed bg-cyan-500 text-brand-dark font-medium rounded-br-none shadow-sm">
+                            ${escapeHtml(text)}
+                        </div>
+                        <span class="text-[9px] font-mono text-slate-500 mt-1 px-1">You • sending...</span>
+                    `;
+                    messagesContainer.appendChild(bubble);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                    try {
+                        await fetch(`${API_BASE}/chat/send`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                sessionId,
+                                customerName,
+                                customerContact,
+                                message: text
+                            })
+                        });
+                        fetchMessages();
+                    } catch(e) {}
+                });
+            }
         };
 
         if (document.readyState === 'loading') {
@@ -1659,5 +2410,102 @@
             bootstrap();
         }
     </script>
+
+    <!-- ================= LIVE CHAT FLOATING WIDGET ================= -->
+    <div id="live-chat-container" class="font-sans">
+        <!-- Animated "Live Chat" Tooltip Badge -->
+        <div id="chat-live-pill" class="fixed bottom-[88px] right-6 z-50 pointer-events-none opacity-0 flex flex-col items-center">
+            <div class="px-3.5 py-1.5 rounded-full bg-slate-900/95 border border-cyan-400 text-cyan-300 text-xs font-mono font-bold tracking-wide shadow-[0_4px_25px_rgba(6,182,212,0.45)] flex items-center gap-1.5 backdrop-blur-md">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                </span>
+                <span>Live Chat</span>
+                <span class="text-cyan-400 text-[11px]">💬</span>
+            </div>
+            <!-- Tooltip pointer arrow -->
+            <div class="w-2.5 h-2.5 bg-slate-900 border-r border-b border-cyan-400 transform rotate-45 -mt-1.5 shadow-sm"></div>
+        </div>
+
+        <!-- Floating Trigger Button -->
+        <button id="chat-widget-toggle" type="button" aria-label="Open Live Chat" class="fixed bottom-6 right-6 z-50 p-3.5 sm:p-4 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-brand-dark shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center group">
+            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-brand-dark animate-pulse" id="chat-online-dot"></span>
+            <span id="chat-unread-badge" class="hidden absolute -top-1.5 -left-1.5 px-1.5 py-0.5 rounded-full bg-red-500 text-white font-mono font-extrabold text-[10px] shadow">1</span>
+            <!-- Chat Icon -->
+            <svg id="chat-icon-open" class="w-6 h-6 text-brand-dark transition-transform group-hover:rotate-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+            <!-- Close Icon -->
+            <svg id="chat-icon-close" class="hidden w-6 h-6 text-brand-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <!-- Chat Modal / Drawer -->
+        <div id="chat-drawer" class="hidden fixed bottom-20 sm:bottom-24 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-[380px] h-[520px] max-h-[80vh] bg-slate-900/95 border border-cyan-500/40 rounded-3xl shadow-[0_15px_50px_rgba(0,0,0,0.85),0_0_25px_rgba(6,182,212,0.2)] backdrop-blur-2xl z-50 flex flex-col overflow-hidden transition-all duration-300">
+            
+            <!-- Chat Header -->
+            <div class="p-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-800 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="relative w-9 h-9 rounded-full bg-cyan-500/20 border border-cyan-400 flex items-center justify-center font-heading font-extrabold text-cyan-400 text-sm shadow-[0_0_10px_rgba(6,182,212,0.3)]">
+                        JG
+                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900"></span>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-heading font-bold text-white text-sm">Josh | Technician</span>
+                            <span class="px-1.5 py-0.2 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-400 text-[9px] font-mono font-bold">Online</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400">Direct Support &amp; Repair Help</p>
+                    </div>
+                </div>
+                <button id="chat-close-btn" type="button" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Intake Screen -->
+            <div id="chat-intake-screen" class="p-6 flex-1 flex flex-col justify-center space-y-4">
+                <div class="text-center space-y-2">
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-inner">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    </div>
+                    <h4 class="font-heading font-bold text-white text-base">Have a quick question?</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Ask about repairs, diagnostics, pricing, or custom builds. We reply right away.</p>
+                </div>
+
+                <form id="chat-intake-form" class="space-y-3 pt-2">
+                    <div>
+                        <label class="block text-[11px] font-mono text-slate-400 mb-1">Your Name</label>
+                        <input id="chat-input-name" type="text" placeholder="e.g. Sarah Jenkins" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400 font-sans" />
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-mono text-slate-400 mb-1">Phone or Email (for follow-up)</label>
+                        <input id="chat-input-contact" type="text" placeholder="e.g. (815) 555-0199 or name@gmail.com" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400 font-sans" />
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-mono text-slate-400 mb-1">How can we help?</label>
+                        <textarea id="chat-input-initial-msg" rows="2" placeholder="Briefly describe what you need help with..." required class="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400 resize-none font-sans"></textarea>
+                    </div>
+                    <button type="submit" id="chat-start-btn" class="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-brand-dark font-mono font-bold text-xs transition flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                        <span>Start Live Chat</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Messages Stream (Active Session) -->
+            <div id="chat-messages-container" class="hidden flex-1 p-4 overflow-y-auto space-y-3 flex-col"></div>
+
+            <!-- Input Bar (Active Session) -->
+            <form id="chat-reply-form" class="hidden p-3 bg-slate-950/80 border-t border-slate-800 flex items-center gap-2">
+                <input id="chat-reply-input" type="text" placeholder="Type a message..." autocomplete="off" class="flex-1 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-sans" />
+                <button type="submit" id="chat-reply-submit" class="p-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-brand-dark transition shadow-[0_0_10px_rgba(6,182,212,0.25)] flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+            </form>
+
+        </div>
+    </div>
 </body>
 </html>
