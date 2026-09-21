@@ -2359,11 +2359,17 @@
             if (!toggleBtn || !drawer) return;
 
             let isOpen = false;
-            let sessionId = localStorage.getItem('jgcpu_chat_session_id');
+            let sessionId = sessionStorage.getItem('jgcpu_chat_session_id');
             let customerName = localStorage.getItem('jgcpu_chat_name') || '';
             let customerContact = localStorage.getItem('jgcpu_chat_contact') || '';
             let lastMessageCount = 0;
             let pollInterval = null;
+
+            // Pre-fill contact details if saved in localStorage
+            const nameInputEl = document.getElementById('chat-input-name');
+            const contactInputEl = document.getElementById('chat-input-contact');
+            if (nameInputEl && customerName) nameInputEl.value = customerName;
+            if (contactInputEl && customerContact) contactInputEl.value = customerContact;
 
             // Business Hours Evaluation (Central Time - CST)
             const checkBusinessHours = () => {
@@ -2474,11 +2480,16 @@
                     iconOpen.classList.add('hidden');
                     iconClose.classList.remove('hidden');
                     if (unreadBadge) unreadBadge.classList.add('hidden');
+                    
+                    // Only restore messages/polling if this visitor already started a conversation in this session
                     if (sessionId) {
                         showActiveChatView();
-                        fetchMessages();
+                        const status = checkBusinessHours();
+                        if (status.isOpen) {
+                            fetchMessages();
+                            startPolling();
+                        }
                     }
-                    startPolling();
                 } else {
                     drawer.classList.add('hidden');
                     iconOpen.classList.remove('hidden');
@@ -2547,7 +2558,7 @@
                     const res = await fetch(`${API_BASE}/chat/messages?sessionId=${encodeURIComponent(sessionId)}`);
                     if (res.ok) {
                         const data = await res.json();
-                        if (data.messages) {
+                        if (data.messages && Array.isArray(data.messages)) {
                             if (data.messages.length > lastMessageCount) {
                                 const newMsgs = data.messages.slice(lastMessageCount);
                                 const hasTechReply = newMsgs.some(m => m.sender === 'Tech');
@@ -2567,10 +2578,10 @@
 
             const startPolling = () => {
                 stopPolling();
+                if (!sessionId) return;
                 const status = checkBusinessHours();
-                // If open, poll every 3.5s while drawer is open. If closed, poll once every 20s.
-                const intervalMs = status.isOpen ? 3500 : 20000;
-                pollInterval = setInterval(fetchMessages, intervalMs);
+                if (!status.isOpen) return; // Zero polling outside business hours
+                pollInterval = setInterval(fetchMessages, 3500);
             };
 
             const stopPolling = () => {
@@ -2613,9 +2624,17 @@
                         if (res.ok) {
                             const data = await res.json();
                             sessionId = data.sessionId;
-                            localStorage.setItem('jgcpu_chat_session_id', sessionId);
+                            sessionStorage.setItem('jgcpu_chat_session_id', sessionId);
                             showActiveChatView();
-                            fetchMessages();
+                            
+                            // Immediately display the sent message in the chat log
+                            renderMessages([{
+                                sender: 'Customer',
+                                message: initialMsg,
+                                timestamp: new Date().toISOString()
+                            }]);
+                            lastMessageCount = 1;
+
                             const status = checkBusinessHours();
                             if (status.isOpen) {
                                 startPolling();
@@ -2661,7 +2680,10 @@
                                 message: text
                             })
                         });
-                        fetchMessages();
+                        const status = checkBusinessHours();
+                        if (status.isOpen) {
+                            fetchMessages();
+                        }
                     } catch(e) {}
                 });
             }
