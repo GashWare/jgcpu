@@ -76,6 +76,43 @@
         { "@type": "City", "name": "Mayfield" },
         { "@type": "AdministrativeArea", "name": "McCracken County" }
       ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "4",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "review": [
+        {
+          "@type": "Review",
+          "author": { "@type": "Person", "name": "Donald" },
+          "datePublished": "2026-09-14",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "reviewBody": "Over the years I have had several laptop computers. At some time they have all needed work on them. One of the best to work with for fast, reliable repair."
+        },
+        {
+          "@type": "Review",
+          "author": { "@type": "Person", "name": "Aaron Swain" },
+          "datePublished": "2026-09-07",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "reviewBody": "I've used JG Computers several times and have always had a great experience. Most of the help I've gotten has been prompt, professional, and solved the problem."
+        },
+        {
+          "@type": "Review",
+          "author": { "@type": "Person", "name": "Mel Bishop" },
+          "datePublished": "2026-09-07",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "reviewBody": "Was quick to respond to a possible data breach at the company I work for. Was able to log in remotely, isolate the issue, and protect our systems."
+        },
+        {
+          "@type": "Review",
+          "author": { "@type": "Person", "name": "Lee Flowers" },
+          "datePublished": "2026-09-07",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "reviewBody": "Josh provided absolutely incredible customer service! He went above and beyond to help me select the perfect custom computer setup."
+        }
+      ],
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
         "name": "Computer Repair & IT Services",
@@ -530,6 +567,7 @@
 
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="#services" class="text-sm font-medium text-gray-300 hover:text-white transition">Services</a>
+                    <a href="#reviews" class="text-sm font-medium text-gray-300 hover:text-white transition">Reviews</a>
                     <a href="#schedule" class="text-sm font-medium text-gray-300 hover:text-white transition">Schedule</a>
                     
                     <!-- Dark / Light Mode Toggle Button (Desktop) -->
@@ -561,6 +599,7 @@
         <div id="mobile-menu" class="mobile-menu bg-brand-dark/95 backdrop-blur-xl border-b border-white/10 md:hidden absolute w-full">
             <div class="px-4 pt-2 pb-6 space-y-3 text-center">
                 <a href="#services" class="block px-3 py-3 text-base font-medium text-gray-300 hover:text-white">Services</a>
+                <a href="#reviews" class="block px-3 py-3 text-base font-medium text-gray-300 hover:text-white">Reviews</a>
                 <a href="#schedule" class="block px-3 py-3 text-base font-medium text-gray-300 hover:text-white">Schedule</a>
                 <div class="pt-2 flex justify-center">
                     <button id="mobile-theme-toggle-btn" type="button" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-800/90 border border-slate-700 text-sm font-semibold text-slate-200 hover:text-white">
@@ -951,6 +990,147 @@
                     </div>
 
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews & Testimonials Section -->
+    <section id="reviews" class="py-20 bg-gray-100/70 dark:bg-transparent border-t border-gray-200 dark:border-slate-800/80 scroll-mt-24 transition-colors duration-200 relative overflow-hidden">
+        <div class="container mx-auto px-4 sm:px-6">
+            <!-- Section Header -->
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-50 dark:bg-cyan-950/60 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
+                    <svg class="w-4 h-4 text-cyan-500 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    Verified Customer Feedback
+                </div>
+                <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-4">
+                    Trusted by <span class="text-gradient">Local Clients</span> in Paducah
+                </h2>
+                <div class="flex flex-wrap items-center justify-center gap-3 text-sm text-gray-600 dark:text-slate-300">
+                    <div class="flex items-center text-amber-400 text-lg tracking-wider">
+                        ★★★★★
+                    </div>
+                    <span class="font-bold text-gray-900 dark:text-white">5.0 Star Rating</span>
+                    <span class="text-gray-400 dark:text-slate-600">•</span>
+                    <span>100% Recommended on Google</span>
+                </div>
+            </div>
+
+            <!-- Reviews Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-12">
+                
+                <!-- Review 1: Donald -->
+                <div class="flex flex-col justify-between bg-white dark:bg-[#0c121e] p-7 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:border-cyan-500/40 transition-all duration-300">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-cyan-500/20 text-cyan-500 font-bold flex items-center justify-center border border-cyan-500/40 text-sm">
+                                    D
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 dark:text-white text-base leading-snug">Donald</h4>
+                                    <div class="text-xs text-gray-500 dark:text-slate-400">Verified Google Review</div>
+                                </div>
+                            </div>
+                            <div class="text-amber-400 text-sm tracking-widest">★★★★★</div>
+                        </div>
+                        <p class="text-gray-600 dark:text-slate-300 text-sm leading-relaxed italic mb-4">
+                            "Over the years I have had several laptop computers. At some time they have all needed work on them. One of the best to work with for fast, reliable repair."
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                        <span class="text-cyan-600 dark:text-cyan-400 font-medium">💻 Laptop Repair &amp; Maintenance</span>
+                        <span class="text-gray-400 dark:text-slate-500">Google Verified</span>
+                    </div>
+                </div>
+
+                <!-- Review 2: Aaron Swain -->
+                <div class="flex flex-col justify-between bg-white dark:bg-[#0c121e] p-7 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:border-cyan-500/40 transition-all duration-300">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center border border-blue-500/40 text-sm">
+                                    AS
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 dark:text-white text-base leading-snug">Aaron Swain</h4>
+                                    <div class="text-xs text-gray-500 dark:text-slate-400">Paducah, KY • Google Review</div>
+                                </div>
+                            </div>
+                            <div class="text-amber-400 text-sm tracking-widest">★★★★★</div>
+                        </div>
+                        <p class="text-gray-600 dark:text-slate-300 text-sm leading-relaxed italic mb-4">
+                            "I've used JG Computers several times and have always had a great experience. Most of the help I've gotten has been prompt, professional, and solved the problem."
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                        <span class="text-cyan-600 dark:text-cyan-400 font-medium">⚡ Tech Support &amp; Diagnostics</span>
+                        <span class="text-gray-400 dark:text-slate-500">Google Verified</span>
+                    </div>
+                </div>
+
+                <!-- Review 3: Mel Bishop -->
+                <div class="flex flex-col justify-between bg-white dark:bg-[#0c121e] p-7 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:border-cyan-500/40 transition-all duration-300">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center border border-emerald-500/40 text-sm">
+                                    MB
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 dark:text-white text-base leading-snug">Mel Bishop</h4>
+                                    <div class="text-xs text-gray-500 dark:text-slate-400">Paducah, KY • Google Review</div>
+                                </div>
+                            </div>
+                            <div class="text-amber-400 text-sm tracking-widest">★★★★★</div>
+                        </div>
+                        <p class="text-gray-600 dark:text-slate-300 text-sm leading-relaxed italic mb-4">
+                            "Was quick to respond to a possible data breach at the company I work for. Was able to log in remotely, isolate the issue, and protect our systems quickly."
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                        <span class="text-emerald-600 dark:text-emerald-400 font-medium">🛡️ Remote Support &amp; Cybersecurity</span>
+                        <span class="text-gray-400 dark:text-slate-500">Google Verified</span>
+                    </div>
+                </div>
+
+                <!-- Review 4: Lee Flowers -->
+                <div class="flex flex-col justify-between bg-white dark:bg-[#0c121e] p-7 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm hover:shadow-lg dark:hover:border-cyan-500/40 transition-all duration-300">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-purple-500/20 text-purple-400 font-bold flex items-center justify-center border border-purple-500/40 text-sm">
+                                    LF
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 dark:text-white text-base leading-snug">Lee Flowers</h4>
+                                    <div class="text-xs text-gray-500 dark:text-slate-400">Verified Google Review</div>
+                                </div>
+                            </div>
+                            <div class="text-amber-400 text-sm tracking-widest">★★★★★</div>
+                        </div>
+                        <p class="text-gray-600 dark:text-slate-300 text-sm leading-relaxed italic mb-4">
+                            "Josh provided absolutely incredible customer service! He went above and beyond to help me select the perfect custom computer setup and answered every question."
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-gray-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+                        <span class="text-purple-600 dark:text-purple-400 font-medium">🖥️ Custom PC &amp; Hardware Advice</span>
+                        <span class="text-gray-400 dark:text-slate-500">Google Verified</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Google Review Call to Action Banner -->
+            <div class="max-w-2xl mx-auto text-center p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-gray-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-left">
+                    <h4 class="font-bold text-gray-900 dark:text-white text-sm">Had a great experience with JG Computers?</h4>
+                    <p class="text-gray-500 dark:text-slate-400 text-xs">Your review helps our local Paducah business grow.</p>
+                </div>
+                <a href="https://maps.google.com/?q=JG+Computers+Paducah+KY" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-black dark:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-bold transition-all shadow border border-slate-700">
+                    <svg class="w-4 h-4 text-amber-400 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    Review Us on Google
+                </a>
             </div>
         </div>
     </section>
