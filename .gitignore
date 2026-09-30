@@ -25,5 +25,6 @@ __pycache__/
 *.pyc
 
 # Unrelated projects & distributions
-GashWare/
+GashWare/downloads/
+GashWare/PowerShell/
 Space_Defender*

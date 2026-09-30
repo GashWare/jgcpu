@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repository & Open Source Hub | Turbo Download Manager by GashWare</title>
+    <meta name="description" content="Official GitHub repository and source code hub for Turbo Download Manager by GashWare. Clone, build from source, report issues, and contribute.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://jgcpu.com/GashWare/github.html">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jgcpu.com/GashWare/github.html">
+    <meta property="og:title" content="GitHub Repository & Source Hub | Turbo Download Manager">
+    <!-- Schema.org Breadcrumbs -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "JG Computers",
+          "item": "https://jgcpu.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "GashWare",
+          "item": "https://jgcpu.com/GashWare/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "GitHub Open Source Hub",
+          "item": "https://jgcpu.com/GashWare/github.html"
+        }
+      ]
+    }
+    </script>
+
+    <!-- Tailwind CSS & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800;900&family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#050a14',
+                            primary: '#0F172A',
+                            surface: '#1E293B',
+                            accent: '#06b6d4',
+                            glow: '#3b82f6',
+                            matrix: '#22c55e',
+                            cyber: '#ec4899'
+                        }
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px)",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .effect-liquid {
+            background: linear-gradient(to right, #06b6d4 0%, #3b82f6 25%, #ffffff 50%, #3b82f6 75%, #06b6d4 100%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: flow-shine 3.5s linear infinite;
+        }
+        @keyframes flow-shine { to { background-position: 200% center; } }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .scanlines {
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0.18));
+            background-size: 100% 4px;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 2;
+        /* Animated matrix canvas - fixed to viewport so it streams seamlessly to the very bottom */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            opacity: 0.16;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-slate-200 antialiased selection:bg-cyan-500 selection:text-white font-sans overflow-x-hidden relative">
+
+    <!-- Background Matrix Canvas & Lighting -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 transition-all duration-300 bg-brand-dark/90 backdrop-blur-md border-b border-white/10">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-3 z-50">
+                    <a href="turbodm.html" class="flex items-center gap-3 group">
+                        <img src="../JG_logo.svg" alt="JG Computers / GashWare" class="h-10 w-auto" onerror="this.src='../favicon.svg'">
+                        <div class="font-heading font-extrabold text-xl tracking-tight text-white flex items-center gap-2">
+                            JG <span class="text-brand-accent">COMPUTERS</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-mono font-semibold">GASHWARE</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-7">
+                    <a href="turbodm.html" class="text-sm font-medium text-gray-300 hover:text-white transition flex items-center gap-1">
+                        ← Back to Overview
+                    </a>
+                    <a href="turbodm.html#downloads" class="text-sm font-medium text-gray-300 hover:text-cyan-400 transition">Downloads</a>
+                    <a href="https://github.com/GashWare/Turbo-Download-Manager" target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-cyan-400 hover:text-white transition flex items-center gap-1.5 font-bold">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        View on GitHub
+                    </a>
+                    <a href="https://square.link/u/obDkxl6F" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-bold text-xs shadow-lg flex items-center gap-1.5">
+                        <span>🍺 Tip Jar</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="relative pt-36 pb-16 overflow-hidden">
+        <div class="scanlines opacity-20 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-grid-pattern bg-[length:32px_32px] opacity-[0.08] pointer-events-none"></div>
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl relative z-10 text-center">
+            
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-cyan-500/40 text-cyan-400 text-xs font-mono font-bold uppercase tracking-wider mb-6 shadow-[0_0_20px_rgba(6,182,212,0.25)]">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                <span>Official Open Source Repository</span>
+            </div>
+
+            <h1 class="font-heading text-4xl sm:text-6xl font-extrabold text-white mb-6">
+                GashWare / <span class="effect-liquid">Turbo-Download-Manager</span>
+            </h1>
+
+            <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8">
+                Turbo Download Manager is 100% open source under the MIT license. Review the source code, contribute pull requests, file feature requests, or fork the codebase for custom workflows.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="https://github.com/GashWare/Turbo-Download-Manager" target="_blank" rel="noopener noreferrer" class="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-7 py-3.5 rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.4)] transition flex items-center gap-2">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    <span>Open GitHub Repository</span>
+                </a>
+                <a href="https://github.com/GashWare/Turbo-Download-Manager/issues" target="_blank" rel="noopener noreferrer" class="px-6 py-3.5 rounded-xl border border-slate-700 hover:border-cyan-400 bg-slate-900/60 text-white font-semibold transition flex items-center gap-2">
+                    <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <span>Issue Tracker</span>
+                </a>
+                <a href="https://square.link/u/obDkxl6F" target="_blank" rel="noopener noreferrer" class="px-6 py-3.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold hover:bg-amber-500/30 transition flex items-center gap-2">
+                    <span>🍺 Support Dev</span>
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Source Code & Architecture Overview -->
+    <main class="py-16 container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl space-y-12">
+        
+        <!-- Quick Clone Box -->
+        <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-500/30">
+            <h2 class="text-xl font-heading font-bold text-white mb-3 flex items-center gap-2">
+                <span class="text-cyan-400">⚡</span> Quick Clone via Git
+            </h2>
+            <div class="p-4 rounded-xl bg-black/90 border border-slate-800 font-mono text-xs sm:text-sm text-cyan-300 flex items-center justify-between overflow-x-auto">
+                <code>git clone https://github.com/GashWare/Turbo-Download-Manager.git</code>
+                <button onclick="navigator.clipboard.writeText('git clone https://github.com/GashWare/Turbo-Download-Manager.git'); alert('Cloned command copied to clipboard!');" class="ml-4 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-cyan-500 hover:text-black text-slate-300 transition text-xs font-sans font-bold flex-shrink-0">
+                    Copy
+                </button>
+            </div>
+        </div>
+
+        <!-- Project Structure Breakdown -->
+        <div class="glass-panel p-8 rounded-2xl border border-slate-800 space-y-6">
+            <h2 class="text-2xl font-heading font-bold text-white mb-2">Repository Architecture</h2>
+            <p class="text-slate-400 text-sm">A clean, modular Python codebase separated by core download engines, UI components, CLI monitors, and cross-platform packaging scripts.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono text-xs">
+                
+                <div class="p-4 rounded-xl bg-black/50 border border-slate-800 space-y-2">
+                    <div class="text-cyan-400 font-bold text-sm">📁 Python/core/</div>
+                    <ul class="space-y-1.5 text-slate-300">
+                        <li><strong class="text-white">downloader.py:</strong> Multi-part parallel engine &amp; work-stealing</li>
+                        <li><strong class="text-white">manager.py:</strong> Download queue, state machine &amp; locks</li>
+                        <li><strong class="text-white">clipboard_monitor.py:</strong> Live URL background interception</li>
+                        <li><strong class="text-white">settings.py:</strong> Thread pools, paths, and speed caps</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-xl bg-black/50 border border-slate-800 space-y-2">
+                    <div class="text-emerald-400 font-bold text-sm">📁 Python/gui/</div>
+                    <ul class="space-y-1.5 text-slate-300">
+                        <li><strong class="text-white">gui_app.py:</strong> CustomTkinter main responsive dashboard</li>
+                        <li><strong class="text-white">matrix_rain.py:</strong> Multi-threaded PIL matrix rain HUD</li>
+                        <li><strong class="text-white">themes.py:</strong> 6 dynamic themes with instant redraw</li>
+                        <li><strong class="text-white">components/:</strong> Download cards, speed meters, dialogs</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-xl bg-black/50 border border-slate-800 space-y-2">
+                    <div class="text-yellow-400 font-bold text-sm">📁 Python/cli/</div>
+                    <ul class="space-y-1.5 text-slate-300">
+                        <li><strong class="text-white">cli_app.py:</strong> Standalone ncurses console interface</li>
+                        <li><strong class="text-white">args.py:</strong> CLI flag parser (-t, -l, --resume, -o)</li>
+                    </ul>
+                </div>
+
+                <div class="p-4 rounded-xl bg-black/50 border border-slate-800 space-y-2">
+                    <div class="text-purple-400 font-bold text-sm">📁 Shell/ &amp; Batch/</div>
+                    <ul class="space-y-1.5 text-slate-300">
+                        <li><strong class="text-white">install_linux.sh:</strong> Automated Linux dependency &amp; desktop setup</li>
+                        <li><strong class="text-white">install_windows.bat:</strong> Windows virtualenv &amp; icon installer</li>
+                        <li><strong class="text-white">build_msi.bat:</strong> cx_Freeze 64-bit MSI compiler recipe</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- How to Build from Source -->
+        <div class="glass-panel p-8 rounded-2xl border border-slate-800 space-y-4">
+            <h2 class="text-2xl font-heading font-bold text-white">Building from Source</h2>
+            
+            <div class="space-y-3 font-mono text-xs">
+                <div class="p-4 bg-black/80 rounded-xl border border-slate-800 text-slate-300 space-y-2">
+                    <div class="text-slate-500 font-bold"># 1. Create and activate a Python virtual environment</div>
+                    <div class="text-cyan-400">python -m venv .venv</div>
+                    <div class="text-cyan-400">source .venv/bin/activate  # Or on Windows: .venv\Scripts\activate</div>
+                    
+                    <div class="text-slate-500 font-bold pt-2"># 2. Install dependencies</div>
+                    <div class="text-cyan-400">pip install -r Python/requirements.txt</div>
+                    
+                    <div class="text-slate-500 font-bold pt-2"># 3. Launch GUI or CLI</div>
+                    <div class="text-emerald-400">python Python/main.py</div>
+                    <div class="text-emerald-400">python Python/main.py --cli https://example.com/file.iso</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark border-t border-slate-800 py-12 text-slate-400 text-xs text-center">
+        <div class="container mx-auto px-6 space-y-4">
+            <p>&copy; 2026 GashWare &bull; JG Computers. Turbo Download Manager is Freeware licensed under MIT.</p>
+            <div class="flex justify-center gap-6">
+                <a href="turbodm.html" class="hover:text-cyan-400">Turbo DM Home</a>
+                <a href="turbodm.html#downloads" class="hover:text-cyan-400">Downloads</a>
+                <a href="https://github.com/GashWare/Turbo-Download-Manager" target="_blank" class="hover:text-white">GitHub Repo</a>
+                <a href="https://square.link/u/obDkxl6F" target="_blank" class="text-amber-400 hover:text-amber-300">🍺 Buy Me a Beer</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Continuous Matrix Canvas Animation -->
+    <script>
+        const canvas = document.getElementById('matrix-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            const chars = '0123456789ABCDEFѦЖTURBO⚡ｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾂﾃﾅﾆﾇﾈﾊﾋﾎﾏﾐﾑﾒﾓﾔﾕﾗﾘﾜ';
+            const fontSize = 14;
+            let columns = Math.floor(width / fontSize);
+            let drops = Array(columns).fill(1).map(() => Math.floor(Math.random() * -60));
+
+            const resizeCanvas = () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                columns = Math.floor(width / fontSize);
+                drops = Array(columns).fill(1).map(() => Math.floor(Math.random() * -40));
+            };
+
+            window.addEventListener('resize', resizeCanvas);
+
+            function drawMatrix() {
+                ctx.fillStyle = 'rgba(5, 10, 20, 0.055)';
+                ctx.fillRect(0, 0, width, height);
+
+                ctx.fillStyle = '#06b6d4';
+                ctx.font = fontSize + 'px "Fira Code", monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    if (drops[i] >= 0) {
+                        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    }
+
+                    if (drops[i] * fontSize > height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            setInterval(drawMatrix, 40);
+        }
+    </script>
+</body>
+</html>
